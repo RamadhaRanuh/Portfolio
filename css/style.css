@@ -97,8 +97,6 @@ a {
     color: #bac964 !important; }
   .site-navbar.scrolled {
     background: #fff;
-    -webkit-box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.09);
-    box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.09);
     position: fixed;
     top: 0;
     left: 0;
@@ -107,9 +105,9 @@ a {
     -webkit-transform: translateY(0%);
     -ms-transform: translateY(0%);
     transform: translateY(0%); }
-    .site-navbar.scrolled.bg-light {
-      box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.09);
-      background: #f8f9fa !important; }
+    .site-navbar.scrolled.bg-light #navbarsExample09 {
+      border-radius: 30px 30px 30px 30px;
+      background-color: rgb(255, 255, 255) !important; }
     .site-navbar.scrolled .navbar-brand {
       display: inline-block;
       font-size: 18px;
@@ -141,6 +139,14 @@ a {
         color: #bac964 !important; }
     .site-navbar.scrolled .navbar-nav > li.active > a {
       color: #bac964 !important; }
+
+
+.col-md-10{
+  margin-top: 50px;
+  
+}
+
+
 
 .site-hero {
   background-color: #ccc;
@@ -335,10 +341,11 @@ a {
   .single-portfolio .p-inner {
     text-align: center; }
     .single-portfolio .p-inner h4 {
-      font-size: 20px; }
+      font-size: 28px; }
     .single-portfolio .p-inner .cat {
-      font-size: 12px;
+      font-size: 16px;
       color: #cccccc; }
+
 
 /*--------- Start Portfolio Area -------------*/
 .portfolio-area .primary-btn {
@@ -421,6 +428,8 @@ a {
 
 .portfolio-area .filters-content .item img {
   width: 100%; }
+
+
 
 .image {
   opacity: 1;
@@ -624,3 +633,8 @@ a {
 .letter-spacing {
   letter-spacing: .2rem;
   color: rgba(255, 255, 255, 0.5) !important; }
+
+  .p-inner h4{
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ffffff;
+  }
