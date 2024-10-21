@@ -169,7 +169,6 @@ a {
     background: rgba(0, 0, 0, 0.5); }
   .site-hero h1 {
     font-weight: 200;
-    margin-bottom: 20px;
     display: block; }
     .site-hero h1 strong {
       font-weight: 800; }
@@ -205,6 +204,10 @@ a {
     -webkit-transform: translateX(-50%);
     -ms-transform: translateX(-50%);
     transform: translateX(-50%); }
+
+.typed-cursor{
+  font-size: 70px;
+}
 
 .lead {
   font-weight: 200;
@@ -334,7 +337,7 @@ a {
         color: #bac964; }
 
 .single-portfolio {
-  margin-bottom: 50px;
+  border:rgb(82, 82, 82) 1px solid;
   display: block; }
   .single-portfolio .relative {
     margin-bottom: 20px; }
@@ -343,6 +346,7 @@ a {
     .single-portfolio .p-inner h4 {
       font-size: 28px; }
     .single-portfolio .p-inner .cat {
+      text-align: justify;
       font-size: 16px;
       color: #cccccc; }
 
@@ -411,6 +415,21 @@ a {
   -o-transition: all 350ms;
   transition: all 350ms; }
 
+
+.portfolio-social{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.portfolio-social .social-item{
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+
 .poftfolio-area .filters-content .item {
   text-align: center;
   cursor: pointer;
@@ -468,6 +487,10 @@ a {
   border-radius: 5px; }
   .single-portfolio:hover .thumb .overlay-bg {
     opacity: .85; }
+
+.single-portfolio .image{
+  margin-top: 10px;
+}
 
 .thumb .overlay-bg {
   opacity: 0;
@@ -635,6 +658,38 @@ a {
   color: rgba(255, 255, 255, 0.5) !important; }
 
   .p-inner h4{
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ffffff;
+    top: 0;
   }
+
+  .list-unstyled{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding-left: 0;
+    margin-bottom: 0;
+    justify-content: flex-start;
+  }
+
+  .text-xs{
+    font-weight: 500;
+    font-size: 14px;
+    color: white;
+    display: flex;
+    justify-content: center; 
+    background-color: #333;
+    border-radius: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin: 2px;
+
+  }
+
+  .text-animation{
+    font-weight: 500;
+    color: white;
+    font-size: 4em;
+    letter-spacing: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+

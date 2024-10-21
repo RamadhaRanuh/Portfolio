@@ -16,7 +16,7 @@
 
 </head>
 <body data-spy="scroll" data-target="#pb-navbar" data-offset="200">
-
+	<script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
 
 
 	<nav class="navbar navbar-expand-lg site-navbar navbar-light bg-light" id="pb-navbar">
@@ -46,16 +46,24 @@
 		<div class="container">
 			<div class="row intro-text align-items-center justify-content-center">
 				<div class="col-md-10 text-center pt-5">
-
-					<h1 class="site-heading site-animate">Hello, I'm <strong class="d-block" style="color: #bac964">Rama Ranuh</strong></h1>
-					<strong class="d-block text-white text-uppercase letter-spacing font-weight-bold">and this is My Resume</strong>
-					<strong class="d-block text-white text-uppercase letter-spacing" style="padding-top: 50px;">“Learning how to do data science is like learning to ski. You have to do it.”<br> — Claudia Perlich</strong>
+					<h1 class="site-heading site-animate" style="font-weight: 500;">Hello, I'm <strong style="color: #bac964">Rama Ranuh</strong></h1>
+					<span class="text-animation"></span>
+					<strong class="d-block text-white text-uppercase letter-spacing" style="padding-top: 20px;">“Learning how to do data science is like learning to ski. You have to do it.”<br> — Claudia Perlich</strong>
 					
 
 				</div>
 			</div>
 		</div>
 	</section> <!-- section -->
+
+	<script>
+		var typed = new Typed(".text-animation", {
+			strings: ["Data Enthusiast", "Data Scientist", "ML Engineer"],
+			typeSpeed: 80,
+			backSpeed: 80,
+			loop: true,
+		});
+	</script>
 
 
 
@@ -96,9 +104,22 @@
 						</div>
 						<div class="p-inner">
 							<h4>NLP LLM-Based Chatbot Model</h4>
+							<ul class = "list-unstyled">
+								<li class="text-xs">Python</li>
+								<li class="text-xs">Flask</li>
+								<li class="text-xs">Tensorflow</li>
+								<li class="text-xs">HuggingFace</li>
+								<li class="text-xs">LLM</li>
+								<li class="text-xs">RAG</li>
+							</ul>
 							<div class="cat">This project implements an AI chatbot using Large Language Models (LLM) and Retrieval Augmented Generation (RAG) techniques to provide detailed answers based on knowledge extracted from PDF documents.</div>
+							
+						</div>    
+
+						<div class="portfolio-social">
 							<a href="https://github.com/RamadhaRanuh/Natural-Language-Processing-Chatbot" class="social-item"><span class="icon-github2" style="font-size: 30px; padding-top: 10px;"></span></a>
-						</div>                                         
+						</div>
+						                                     
 					</div>
 					<div class="single-portfolio col-sm-4 all DeepLearning">
 						<div class="relative">
@@ -114,9 +135,19 @@
 						</div>
 						<div class="p-inner">
 							<h4>Speech Emotion Recognition</h4>
+							<ul class = "list-unstyled">
+								<li class="text-xs">Python</li>
+								<li class="text-xs">Keras</li>
+								<li class="text-xs">Tensorflow</li>
+								<li class="text-xs">Librosa</li>
+								<li class="text-xs">CNN</li>
+							</ul>
 							<div class="cat">Developed a Speech Emotion Recognition system using Convolutional Neural Networks (CNN) with TensorFlow. The project involved training a model to recognize emotions from speech input, utilizing audio features for accurate emotion classification.</div>
+						</div>    
+						
+						<div class="portfolio-social">
 							<a href="https://github.com/RamadhaRanuh/Speech-Emotion-Recognition" class="social-item"><span class="icon-github2" style="font-size: 30px;"></span></a>
-						</div>                                         
+						</div>
 					</div>                            
 					<div class="single-portfolio col-sm-4 all MachineLearning">
 						<div class="relative">
@@ -133,7 +164,16 @@
 						</div>
 						<div class="p-inner">
 							<h4>Patient's Condition Classification Using Drug Reviews</h4>
+							<ul class = "list-unstyled">
+								<li class="text-xs">Python</li>
+								<li class="text-xs">Scikit-Learn</li>
+								<li class="text-xs">Streamlit</li>
+
+							</ul>
 							<div class="cat">Analyze the disease description to predict the specific medical condition or diagnosis using advanced machine learning algorithms (XGBoost, PAC, LR) and natural language processing techniques (TF-IDF, Word2Vec). </div>
+						</div>
+
+						<div class="portfolio-social">
 							<a href="https://github.com/RamadhaRanuh/Patient-s-Condition-Classification-Using-Drug-Reviews" class="social-item"><span class="icon-github2" style="font-size: 30px; padding-top: 10px;"></span></a>
 						</div>
 					</div>
@@ -152,7 +192,17 @@
 						</div> 
 						<div class="p-inner">
 							<h4>A Comparative Study of Deep Learning Algorithms for Image Based Classification of Hyperpigmented Skin Disease</h4>
+							<ul class = "list-unstyled">
+								<li class="text-xs">Python</li>
+								<li class="text-xs">Tensorflow</li>
+								<li class="text-xs">Keras</li>
+								<li class="text-xs">CNN</li>
+								<li class="text-xs">YOLO</li>
+							</ul>
 							<div class="cat">Analyze and compare for hyperpigmented skin disease using machine learning and deep learning techniques. The study analyzed pretrained models like YOLO, DenseNet201, GoogLeNet, InceptionResNetV2, and MobileNet.</div>
+						</div>
+
+						<div class="portfolio-social">
 							<a href="https://github.com/RamadhaRanuh/Hyperpigmented-Skin-Disease-Classification" class="social-item"><span class="icon-github2" style="font-size: 30px; padding-top: 10px;"></span></a>
 							<a href="https://www.youtube.com/watch?v=mVzJN3HjZPQ&t=259s" class="social-item"><span class="icon-youtube" style="font-size: 30px;"></span></a>
 						</div>
@@ -171,7 +221,19 @@
 						</div>
 						<div class="p-inner">
 							<h4>Twitter Sentiment Analysis - Comparing Traditional Methods with Deep Learning Methods</h4>
+							<ul class = "list-unstyled">
+								<li class="text-xs">Python</li>
+								<li class="text-xs">Tensorflow</li>
+								<li class="text-xs">Keras</li>
+								<li class="text-xs">PyTorch</li>
+								<li class="text-xs">NLTK</li>
+								<li class="text-xs">LSTM</li>
+								<li class="text-xs">LR</li>
+							</ul>		
 							<div class="cat">This project aims to analyze and classify sentiments expressed in Twitter posts using both traditional machine learning and deep learning techniques. The traditional method employs logistic regression to classify tweets, while the deep learning method leverages Long Short-Term Memory (LSTM).</div>
+						</div>
+
+						<div class="portfolio-social">
 							<a href="https://github.com/RamadhaRanuh/Twitter-Sentiment-Analysis" class="social-item"><span class="icon-github2" style="font-size: 30px; padding-top: 10px;"></span></a>
 						</div>
 					</div>
@@ -189,7 +251,17 @@
 						</div>
 						<div class="p-inner">
 							<h4>Doctor Hunter</h4>
+							<ul class = "list-unstyled">
+								<li class="text-xs">Java</li>
+								<li class="text-xs">JavaFX</li>
+								<li class="text-xs">SQL</li>
+								<li class="text-xs">MySQL</li>
+								<li class="text-xs">JDBC</li>
+							</ul>								
 							<div class="cat">Doctor Hunter is a fun comprehensive GUI-based application project developed using JavaFX and connected to SQL database using JDBC, designed to streamline the process of scheduling doctor appointments and managing healthcare-related tasks. </div>
+						</div>
+
+						<div class="portfolio-social">
 							<a href="https://github.com/RamadhaRanuh/OOP_Doctor_Hunter" class="social-item"><span class="icon-github2" style="font-size: 30px; padding-top: 10px;"></span></a>
 						</div>
 					</div>
@@ -209,7 +281,17 @@
 						</div>
 						<div class="p-inner">
 							<h4>COVID-19 Data Analysis</h4>
+							<ul class = "list-unstyled">
+								<li class="text-xs">Python</li>
+								<li class="text-xs">Pandas</li>
+								<li class="text-xs">NumPy</li>
+								<li class="text-xs">Matplotlib</li>
+								<li class="text-xs">Seaborn</li>
+							</ul>	
 							<div class="cat">Performed an in-depth analysis of COVID-19 data to identify critical insights and trends. The project included data collection, cleaning, and exploratory data analysis (EDA) to visualize the spread, infection rates, and recovery trends.</div>
+						</div>
+
+						<div class="portfolio-social">
 							<a href="https://github.com/RamadhaRanuh/ML_EDA-Analysis-Data-Preprocessing-on-COVID-19-DATASET" class="social-item"><span class="icon-github2" style="font-size: 30px; padding-top: 10px;"></span></a>
 						</div>
 					</div>
@@ -229,7 +311,15 @@
 						</div>
 						<div class="p-inner">
 							<h4>Earthquake Data Analysis in Indonesia</h4>
+							<ul class = "list-unstyled">
+								<li class="text-xs">Tableau</li>
+								<li class="text-xs">Excel</li>
+								<li class="text-xs">Canva</li>
+							</ul>	
 							<div class="cat">Conducted a comprehensive data analysis of earthquake occurrences in Indonesia to uncover key insights and patterns. This project involved collecting and cleaning earthquake data, performing exploratory data analysis (EDA), and visualizing significant trends and correlations.</div>
+						</div>
+
+						<div class="portfolio-social">
 							<a href="https://www.canva.com/design/DAFn8mQH79o/fUEEMTpCv61WAXDDoAUEdg/edit" class="social-item"><span class="icon-attachment3" style="font-size: 24px; padding-top: 10px;"></span></a>
 						</div>
 					</div>
@@ -249,7 +339,16 @@
 						</div>
 						<div class="p-inner">
 							<h4>Rice Price Prediction Model</h4>
+							<ul class = "list-unstyled">
+								<li class="text-xs">Python</li>
+								<li class="text-xs">TKinter</li>
+								<li class="text-xs">NumPy</li>
+								<li class="text-xs">Pandas</li>
+							</ul>	
 							<div class="cat">Developed a machine learning model to predict the future price of rice based on historical pricing data. The model analyzes dozens of rice prices over time, utilizing various algorithms to provide accurate and reliable forecasts. </div>
+						</div>
+
+						<div class="portfolio-social">
 							<a href="https://github.com/RamadhaRanuh/Rice-Price-Prediction-Model" class="social-item"><span class="icon-github2" style="font-size: 30px; padding-top: 10px;"></span></a>
 						</div>
 					</div>
@@ -269,7 +368,16 @@
 						</div>
 						<div class="p-inner">
 							<h4>TutorDek</h4>
+							<ul class = "list-unstyled">
+								<li class="text-xs">HTML</li>
+								<li class="text-xs">CSS</li>
+								<li class="text-xs">Javascript</li>
+								<li class="text-xs">Bootstrap</li>
+							</ul>	
 							<div class="cat">TutorDek is a web application designed to streamline the process of finding and hiring tutors for both students and educators. Our platform connects learners with qualified tutors in a wide range of subjects, providing a seamless experience for booking, scheduling, and managing tutoring sessions.</div>
+						</div>
+
+						<div class="portfolio-social">
 							<a href="https://github.com/RamadhaRanuh/TutorDek-Software-Engineer" class="social-item"><span class="icon-github2" style="font-size: 30px; padding-top: 10px;"></span></a>
 						</div>
 					</div>
@@ -288,8 +396,16 @@
 						</div>
 						<div class="p-inner">
 							<h4>BCA Business Case Project</h4>
+							<ul class = "list-unstyled">
+								<li class="text-xs">Canva</li>
+								<li class="text-xs">Excel</li>
+							</ul>	
 							<div class="cat">investigating the current landscape of digital banking in Indonesia, particularly how fintech and digital platforms are reshaping financial services. This involves analyzing the rise of seamless and convenient banking services that enhance financial inclusion and developing a strategy to position BCA Digital (blu) as a leader in the digital banking space.</div>
-							<a href="https://www.linkedin.com/feed/update/urn:li:activity:7237635263223492608/" class="social-item"><span class="icon-linkedin2" style="font-size: 24px; padding-top: 10px;"></span></a>
+							
+						</div>
+
+						<div class="portfolio-social">
+							<a href="https://www.linkedin.com/feed/update/urn:li:activity:7237635263223492608/" class="social-item"><span class="icon-linkedin2" style="font-size: 26px; padding-top: 10px;"></span></a>
 						</div>
 					</div>
 
@@ -451,7 +567,7 @@
 			<div class="row mb-5">
 				<p class="col-12 text-center">
 					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-					&copy; <script>document.write(new Date().getFullYear());</script> Rama Ranuh. All rights reserved | Design: <a href="https://colorlib.com" target="_blank" class="text-primary">Colorlib</a>
+					&copy; <script>document.write(new Date().getFullYear());</script> Rama Ranuh. All rights reserved<a href="https://colorlib.com" target="_blank" class="text-primary"></a>
 					<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 				</p>
 			</div>
