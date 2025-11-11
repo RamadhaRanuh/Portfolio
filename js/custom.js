@@ -292,28 +292,73 @@
 
 
 
-	var portfolioMasonry = function() {
- $('.filters ul li').click(function(){
-        $('.filters ul li').removeClass('active');
-        $(this).addClass('active');
-        
-        var data = $(this).attr('data-filter');
-        $grid.isotope({
-          filter: data
-        })
-      });
+var portfolioMasonry = function() {
 
+		// First, check if the portfolio section exists
+		if(document.getElementById("section-portfolio")){
 
-      if(document.getElementById("section-portfolio")){
-            var $grid = $(".grid").isotope({
-            	itemSelector: ".all",
-              	percentPosition: true,
-              	masonry: {
-                columnWidth: ".all"
-              }
-            })
-      };
+			// Define the grid
+			var $grid = $(".grid").isotope({
+				itemSelector: ".all",
+				layoutMode: 'fitRows' // Use fitRows, not masonry
+			});
 
+			// --- THIS IS THE NEW, IMPROVED FUNCTION ---
+			function equalizeItemHeights() {
+				// Get all filtered items that are visible
+				var items = $grid.isotope('getFilteredItemElements');
+				if (!items.length) return;
+
+				// Reset all item heights first to get their natural height
+				$(items).css('height', '');
+
+				// --- NEW LOGIC: Loop through items in chunks of 3 ---
+				for (var i = 0; i < items.length; i += 3) {
+					
+					// Get the 3 items for the current row
+					var $rowItems = $(items).slice(i, i + 3);
+					
+					var maxHeight = 0;
+
+					// Find the max height among these 3 items
+					$rowItems.each(function() {
+						var height = $(this).outerHeight();
+						if (height > maxHeight) {
+							maxHeight = height;
+						}
+					});
+
+					// Apply that max height to all 3 items in the row
+					if (maxHeight > 0) {
+						$rowItems.css('height', maxHeight + 'px');
+					}
+				}
+				// --- END OF NEW LOGIC ---
+
+			} // end of equalizeItemHeights function
+
+			// Click handler for filters
+			$('.filters ul li').click(function(){
+				$('.filters ul li').removeClass('active');
+				$(this).addClass('active');
+				
+				var data = $(this).attr('data-filter');
+				$grid.isotope({
+					filter: data
+				});
+				// Isotope's layout will be re-run, triggering 'layoutComplete'
+			});
+
+			// Call equalize heights after layout is complete
+			$grid.on( 'layoutComplete', equalizeItemHeights);
+			
+			// We need to wait for images to load, otherwise heights are 0
+			// This will trigger the initial layout and the 'layoutComplete' event
+			$grid.imagesLoaded().progress( function() {
+				$grid.isotope('layout');
+			});
+
+		}; // end of if(document.getElementById("section-portfolio"))
 
 	};
 

@@ -431,14 +431,24 @@ a {
 }
 
 .single-portfolio {
-	margin-bottom: 50px;
-	display: block;
+	margin-bottom: 10px; // This is your 10px row gap
+	
+	/* --- This is the flex code from before (still needed) --- */
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	/* -------------------------------------------------------- */
 
 	.relative {
 		margin-bottom: 20px;
 	}
 	.p-inner {
 		text-align: center;
+		
+		/* --- This is the flex-grow code from before (still needed) --- */
+		flex-grow: 1; 
+		/* ----------------------------------------------------------- */
+		
 		h4 {
 			font-size: 20px;
 		}
@@ -551,6 +561,7 @@ a {
   transition: .5s ease;
   backface-visibility: hidden;
 }
+
 
 .middle {
   transition: .5s ease;
@@ -778,4 +789,91 @@ a {
 .letter-spacing {
 	letter-spacing: .2rem;
 	color: rgba($white, .5)!important;
+}
+
+.expertise-box {
+	padding: 25px;
+	border: 1px solid transparent;
+	border-radius: 12px;
+	transition: border 0.3s ease;
+	height: 100%; /* Make boxes in the same row equal height */
+}
+
+.expertise-box:hover {
+	border: 1px solid #d4d4d4; /* A light border on hover */
+}
+
+.skill-category {
+	margin-bottom: 30px;
+}
+
+.skill-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+.skill-header h4 {
+	margin-bottom: 0;
+	font-weight: 500;
+	font-size: 1.1rem;
+}
+
+.skill-level {
+	font-size: 12px;
+	padding: 4px 10px;
+	border-radius: 20px;
+	background-color: #f0f3e0; /* Light version of your theme green */
+	color: #5b632d;
+	font-weight: 500;
+}
+
+.skill-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.skill-tag {
+	font-size: 13px;
+	padding: 5px 10px;
+	border-radius: 6px;
+	background-color: #f7f9f0; /* Even lighter green */
+	color: #333;
+}
+
+/* --- Styles for Language Progress Bars (FIXED) --- */
+
+.progress-item {
+	margin-bottom: 25px; /* Adds space between each bar */
+}
+
+.progress-title {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 8px;
+	font-weight: 500;
+}
+
+.progress-title span:last-child {
+	font-size: 14px;
+	color: #555;
+}
+
+/* Overriding Bootstrap's default .progress class */
+.progress {
+	height: 8px;
+	background-color: #f0f3e0; /* Light background for the bar track */
+	border-radius: 4px;
+	box-shadow: none; /* Remove default Bootstrap shadow */
+	overflow: hidden;
+}
+
+/* Overriding Bootstrap's default .progress-bar class */
+.progress-bar {
+	background-color: #bac964; /* Your site's primary green color */
+	box-shadow: none; /* Remove default Bootstrap shadow */
+	border-radius: 4px;
 }
