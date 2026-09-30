@@ -95,6 +95,21 @@ h2::before{content:"// ";color:var(--accent)}
 .media .ln{stroke:var(--mute);fill:none}
 .media .bar-bg{fill:var(--rule)}
 
+/* diagrams that play on hover, tap or the play button (see features.js) */
+.media svg rect,.media svg text,.media svg line{transition:opacity .2s,fill .2s,stroke .2s,width .9s cubic-bezier(.2,.7,.2,1)}
+.media svg.has-on rect:not(.on):not(.bar-bg),.media svg.has-on g[font-size] text:not(.on){opacity:.38}
+.media svg .box.on,.media svg .abox.on{stroke:var(--accent);stroke-width:1.5;fill:rgba(var(--heat),.16)}
+.media svg rect.m.on{fill:var(--accent)}
+.media svg text.on{fill:var(--fg)}
+.media svg .tick{stroke:var(--fg);stroke-width:1.5;opacity:0}
+.media svg .tick.on,.media svg.played .tick{opacity:1}
+.media .dcap{font:12px/1.5 var(--mono);color:var(--mute);padding:0 16px;min-height:4.5em;margin:0}
+.dctl{padding:6px 16px 12px}
+.dctl button{font:12px var(--mono);background:none;border:1px solid var(--rule);color:var(--fg);border-radius:6px;height:28px;padding:0 10px;cursor:pointer}
+.dctl button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.dctl button:disabled{opacity:.4;cursor:default}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
 /* screenshot lightbox */
 .zoom{display:block;position:relative;width:100%;padding:0;border:0;background:none;cursor:zoom-in;color:#fff}
 .zoom svg{position:absolute;right:8px;bottom:8px;width:26px;height:26px;padding:6px;border-radius:6px;background:rgba(17,17,16,.72)}
