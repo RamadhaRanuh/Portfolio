@@ -11,6 +11,25 @@
   sync();
 })();
 
+// Navigation feedback: mark the section crossing a line a third of the way down the screen.
+(function () {
+  var links = [].slice.call(document.querySelectorAll('.bar nav a[href^="#"]'));
+  var secs = links.map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); });
+  if (!links.length) return;
+  var queued = false;
+  function mark() {
+    queued = false;
+    var line = innerHeight / 3, cur = -1;
+    secs.forEach(function (s, i) { if (s && s.getBoundingClientRect().top <= line) cur = i; });
+    if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) cur = links.length - 1;
+    links.forEach(function (a, i) { if (i === cur) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
+  }
+  function queue() { if (!queued) { queued = true; requestAnimationFrame(mark); } }
+  addEventListener('scroll', queue, { passive: true });
+  addEventListener('resize', queue);
+  mark();
+})();
+
 // Hero attention heatmap. AFF[i][j] is how strongly word i "attends" to word j.
 // The weights are hand-picked to look plausible; no model produced them.
 (function () {

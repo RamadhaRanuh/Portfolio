@@ -90,7 +90,10 @@ document.documentElement.dataset.theme=t})();
 					</div>
 				</div>
 				<div class="media">
-					<img src="assets/img/local-notebook.webp" width="1200" height="717" alt="Local Notebook: a chat answer with numbered citations, and the cited passage highlighted in the source PDF beside it.">
+					<button class="zoom" type="button" aria-label="Enlarge the Local Notebook screenshot">
+						<img src="assets/img/local-notebook.webp" width="1200" height="717" alt="Local Notebook: a chat answer with numbered citations, and the cited passage highlighted in the source PDF beside it.">
+						<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					</button>
 				</div>
 			</article>
 
@@ -241,6 +244,12 @@ document.documentElement.dataset.theme=t})();
 
 <footer class="wrap">© 2026 Rama Ranuh · Jakarta, Indonesia</footer>
 
-<script src="assets/hero.js"></script>
+<dialog id="lightbox" aria-label="Local Notebook screenshot">
+	<button class="close" type="button" aria-label="Close">×</button>
+	<img alt="">
+</dialog>
+
+<script src="assets/hero.js" defer></script>
+<script src="assets/features.js" defer></script>
 </body>
 </html>
