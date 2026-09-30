@@ -16,7 +16,7 @@
 // presses play, then rests. Nothing moves until they act.
 (function () {
   var NS = 'http://www.w3.org/2000/svg';
-  var svgs = [].slice.call(document.querySelectorAll('.card .media svg')); // chart, pipeline, stacks
+  var svgs = [].slice.call(document.querySelectorAll('.card .media > svg')); // chart, pipeline, stacks
   if (svgs.length !== 3) return;
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
