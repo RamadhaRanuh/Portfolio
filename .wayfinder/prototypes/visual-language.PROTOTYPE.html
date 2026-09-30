@@ -1,0 +1,146 @@
+<!doctype html>
+<!--
+PROTOTYPE (throwaway): base visual language for the portfolio redesign.
+Question: which type pairing / spacing / card structure feels elegant, editorial, not bloated?
+Fixed by earlier decisions: attention-heatmap hero, single column, blue accent in light mode, orange in dark mode.
+Same hero + one flagship card (Local Notebook) rendered three ways. Switch: bottom bar, ← →, or ?variant=A|B|C. ◐ toggles theme.
+Copy and numbers are from .wayfinder/research/flagship-evidence.md. Image is hot-linked from the repo.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PROTOTYPE visual language</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Inter:wght@400;500;600&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fafaf7;--fg:#16161a;--mute:#65656e;--rule:#e2e2dc;--soft:#f0f0ea;--accent:#1d4ed8;--heat:29,78,216}
+:root[data-theme=dark]{--bg:#111110;--fg:#ecebe6;--mute:#8d8a82;--rule:#2b2a27;--soft:#1a1a18;--accent:#fb923c;--heat:251,146,60}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);transition:background .3s,color .3s}
+a{color:inherit}
+.tok{display:inline-block;padding:0 .08em;border-radius:.12em;background:rgba(var(--heat),var(--w,0));transition:background .18s}
+.ph{color:var(--mute)}
+.tag{display:inline-block;font-size:12px;color:var(--mute);border:1px solid var(--rule);border-radius:999px;padding:2px 10px;margin:0 6px 6px 0}
+.shot{display:block;width:100%;border:1px solid var(--rule);border-radius:6px;background:var(--soft)}
+.dot{color:var(--accent)}
+#sw{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:6px;align-items:center;background:#111;color:#fff;border-radius:999px;padding:6px 8px;box-shadow:0 6px 24px rgba(0,0,0,.35);font:13px system-ui;z-index:9}
+#sw button{background:#2a2a2a;color:#fff;border:0;border-radius:999px;min-width:32px;height:32px;cursor:pointer;font-size:15px}
+#sw span{padding:0 10px;min-width:210px;text-align:center}
+
+/* ===== A: warm serif editorial ===== */
+.A{font:17px/1.65 Inter,sans-serif}
+.A .wrap{max-width:720px;margin:0 auto;padding:0 24px 22vh}
+.A nav{display:flex;justify-content:space-between;padding:28px 0;font-size:14px;color:var(--mute)}
+.A nav div{display:flex;gap:24px}
+.A h1{font:400 clamp(38px,6.2vw,64px)/1.1 Fraunces,serif;letter-spacing:-.02em;margin:9vh 0 22px}
+.A .lede{font-size:19px;color:var(--mute);max-width:32em;margin:0 0 28px}
+.A .cta a{margin-right:22px;font-size:15px}.A .cta .p{border-bottom:1.5px solid var(--accent);padding-bottom:2px;text-decoration:none}
+.A h2{font:500 13px Inter;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin:12vh 0 22px;display:flex;gap:14px;align-items:center}
+.A h2::after{content:"";flex:1;height:1px;background:var(--rule)}
+.A .card h3{font:400 30px/1.2 Fraunces,serif;margin:18px 0 8px;letter-spacing:-.01em}
+.A .card p{margin:0 0 14px;color:var(--mute)}
+.A .nums{display:flex;gap:36px;margin:18px 0}
+.A .nums b{display:block;font:400 38px/1 Fraunces,serif;color:var(--accent)}
+.A .nums small{color:var(--mute);font-size:13px}
+.A .more li{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--rule);list-style:none}
+.A .more{padding:0;margin:0}
+
+/* ===== B: crisp sans + mono labels, two-column card ===== */
+.B{font:16px/1.6 Inter,sans-serif}
+.B .wrap{max-width:980px;margin:0 auto;padding:0 28px 22vh}
+.B nav{display:flex;justify-content:space-between;padding:24px 0;font:13px 'JetBrains Mono',monospace;color:var(--mute)}
+.B nav div{display:flex;gap:22px}
+.B h1{font:600 clamp(36px,5.6vw,60px)/1.05 'Inter Tight',sans-serif;letter-spacing:-.035em;margin:9vh 0 20px}
+.B .lede{font-size:18px;color:var(--mute);max-width:34em;margin:0 0 26px}
+.B .cta a{display:inline-block;margin-right:10px;font-size:14px;border:1px solid var(--rule);border-radius:8px;padding:9px 16px;text-decoration:none}
+.B .cta .p{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme=dark] .B .cta .p{color:#111}
+.B h2{font:500 12px 'JetBrains Mono',monospace;color:var(--mute);margin:11vh 0 18px}
+.B h2::before{content:"// ";color:var(--accent)}
+.B .card{display:grid;grid-template-columns:1.1fr 1fr;gap:32px;border:1px solid var(--rule);border-radius:12px;padding:22px;background:var(--soft)}
+.B .card h3{font:600 24px/1.2 'Inter Tight';letter-spacing:-.02em;margin:0 0 8px}
+.B .card p{color:var(--mute);margin:0 0 14px;font-size:15px}
+.B .grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin:14px 0}
+.B .grid div{background:var(--bg);padding:12px 14px}
+.B .grid b{display:block;font:500 24px 'JetBrains Mono',monospace;color:var(--accent)}
+.B .grid small{color:var(--mute);font-size:12px}
+.B .more{padding:0;margin:0;font:14px 'JetBrains Mono',monospace}
+.B .more li{display:grid;grid-template-columns:200px 1fr auto;gap:14px;padding:10px 0;border-top:1px solid var(--rule);list-style:none}
+@media(max-width:720px){.B .card{grid-template-columns:1fr}.B .more li{grid-template-columns:1fr}}
+
+/* ===== C: text-led reading page, narrow measure, no boxes ===== */
+.C{font:19px/1.7 Newsreader,Georgia,serif}
+.C .wrap{max-width:600px;margin:0 auto;padding:0 24px 22vh}
+.C nav{padding:34px 0;font:14px Inter,sans-serif;color:var(--mute);display:flex;gap:22px;justify-content:center}
+.C h1{font:400 clamp(34px,5vw,50px)/1.15 Newsreader,serif;letter-spacing:-.01em;margin:10vh 0 18px;text-align:center}
+.C .lede{text-align:center;color:var(--mute);margin:0 0 24px}
+.C .cta{text-align:center;font:15px Inter}.C .cta a{margin:0 11px}.C .cta .p{color:var(--accent);font-weight:500}
+.C h2{font:italic 400 15px Newsreader;color:var(--accent);margin:12vh 0 12px;text-align:center}
+.C .card{border-top:1px solid var(--rule);padding-top:22px}
+.C .card h3{font:500 26px/1.25 Newsreader;margin:0 0 6px}
+.C .card p{margin:0 0 12px}
+.C .card .shot{width:150px;float:right;margin:4px 0 10px 20px}
+.C .card .meta{font:14px Inter;color:var(--mute);clear:both}
+.C .more{padding:0;margin:0;font-size:17px}.C .more li{list-style:none;padding:5px 0}.C .more span{color:var(--mute)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div id="sw"><button id="prev">←</button><span id="lab"></span><button id="next">→</button><button id="th">◐</button></div>
+<script>
+const IMG='https://raw.githubusercontent.com/RamadhaRanuh/Deepnote/master/docs/images/chat-citation.png';
+const LEDE='I build and evaluate LLM applications that run locally and cite their sources.';
+const WORDS=["I'm","Rama","Ranuh,","an","AI","Engineer."];
+const tokens=WORDS.map((w,i)=>`<span class="tok" data-i="${i}">${w}</span>`).join(' ');
+const nav=(items)=>items.map(i=>`<a>${i}</a>`).join('');
+const more=[['Hyperpigmented skin classification','ICCSCI paper, five CNN/YOLO models'],['Medical RAG chatbot','Gale Encyclopedia of Medicine, LlamaIndex + llama.cpp'],['From-Scratch','Transformer and Llama 2 in PyTorch'],['Thesis','write-up, code private']];
+const V=[
+{k:'A',name:'Warm serif editorial',html:()=>`<div class="A"><div class="wrap">
+<nav><span>Rama Ranuh</span><div>${nav(['Projects','Experience','More work','Contact'])}</div></nav>
+<h1>${tokens}</h1><p class="lede">${LEDE}</p>
+<div class="cta"><a class="p" href="mailto:ramadha.ranuh@gmail.com">Email me</a><a class="ph">CV</a><a class="ph">GitHub</a></div>
+<h2>Selected work</h2>
+<div class="card"><img class="shot" src="${IMG}" alt=""><h3>Local Notebook</h3>
+<p>Research over your own documents with nothing leaving the machine: hybrid retrieval, a reranker, and citations checked sentence by sentence, on an 8&nbsp;GB laptop GPU.</p>
+<div class="nums"><div><b>0.95</b><small>answer correctness</small></div><div><b>0.94</b><small>citation recall</small></div><div><b>~5 s</b><small>median latency</small></div></div>
+<span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">Ollama</span><span class="tag">LanceDB</span><span class="tag">React</span> <a href="#" class="ph">Code →</a></div>
+<h2>More work</h2><ul class="more">${more.map(m=>`<li><span>${m[0]}</span><span class="ph">${m[1]}</span></li>`).join('')}</ul></div></div>`},
+{k:'B',name:'Crisp sans + mono labels',html:()=>`<div class="B"><div class="wrap">
+<nav><span>rama.ranuh</span><div>${nav(['projects','experience','more','contact'])}</div></nav>
+<h1>${tokens}</h1><p class="lede">${LEDE}</p>
+<div class="cta"><a class="p" href="mailto:ramadha.ranuh@gmail.com">Email me</a><a>CV</a><a>GitHub</a></div>
+<h2>flagship</h2>
+<div class="card"><div><h3>Local Notebook</h3>
+<p>Fully local, NotebookLM-style research over your own documents. Hybrid dense + BM25 retrieval, reranker, sentence-level citation checks.</p>
+<div class="grid"><div><b>0.95</b><small>correctness</small></div><div><b>0.94</b><small>citation recall</small></div><div><b>4.95 s</b><small>p50 latency</small></div><div><b>8 GB</b><small>laptop GPU</small></div></div>
+<span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">Ollama</span><span class="tag">LanceDB</span> <a href="#" class="ph">code →</a></div>
+<div><img class="shot" src="${IMG}" alt=""></div></div>
+<h2>more work</h2><ul class="more">${more.map(m=>`<li><span>${m[0]}</span><span class="ph">${m[1]}</span><span class="dot">↗</span></li>`).join('')}</ul></div></div>`},
+{k:'C',name:'Reading page, narrow measure',html:()=>`<div class="C"><div class="wrap">
+<nav>${nav(['Projects','Experience','More work','Contact'])}</nav>
+<h1>${tokens}</h1><p class="lede">${LEDE}</p>
+<div class="cta"><a class="p" href="mailto:ramadha.ranuh@gmail.com">Email</a><a class="ph">CV</a><a class="ph">GitHub</a></div>
+<h2>Selected work</h2>
+<div class="card"><img class="shot" src="${IMG}" alt=""><h3>Local Notebook</h3>
+<p>Ask questions of your own documents and get answers with citations you can click, all on a laptop with no data leaving it. On a hand-checked 37-question set it scored <b style="color:var(--accent)">0.95</b> correctness and <b style="color:var(--accent)">0.94</b> citation recall, with a median answer in about five seconds.</p>
+<div class="meta">Python · FastAPI · Ollama · LanceDB · React &nbsp; <a href="#" style="color:var(--accent)">Code →</a></div></div>
+<h2>More work</h2><ul class="more">${more.map(m=>`<li>${m[0]} <span>— ${m[1]}</span></li>`).join('')}</ul></div></div>`}
+];
+const AFF=[[.2,.5,.4,.1,.1,.2],[.3,.1,.9,.1,.2,.3],[.2,.9,.1,.1,.2,.3],[.1,.2,.2,.1,.8,.7],[.1,.2,.3,.3,.1,.95],[.2,.4,.5,.4,.95,.1]];
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;let timer;
+function heat(){clearInterval(timer);const t=[...document.querySelectorAll('.tok')];let hov=false,i=5;
+ const show=q=>t.forEach((e,j)=>e.style.setProperty('--w',q<0||j===q?0:(AFF[q][j]*.55).toFixed(2)));
+ t.forEach((e,j)=>{e.onmouseenter=()=>{hov=true;show(j)};e.onmouseleave=()=>{hov=false;show(-1)}});
+ if(!reduce){show(4);timer=setInterval(()=>{if(!hov){show(i);i=(i+1)%t.length}},1400)}}
+const cur=()=>(new URLSearchParams(location.search).get('variant')||'A').toUpperCase();
+function go(k){const v=V.find(x=>x.k===k)||V[0];root.innerHTML=v.html();heat();lab.textContent=`${v.k} (${v.name})`;
+ const u=new URL(location);u.searchParams.set('variant',v.k);history.replaceState(null,'',u)}
+const step=d=>{const i=V.findIndex(v=>v.k===cur());go(V[(i+d+V.length)%V.length].k)};
+prev.onclick=()=>step(-1);next.onclick=()=>step(1);
+addEventListener('keydown',e=>{if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});
+th.onclick=()=>{const d=document.documentElement;d.dataset.theme=d.dataset.theme==='dark'?'light':'dark'};
+if(matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.dataset.theme='dark';
+go(cur());
+</script>
+</body>
+</html>

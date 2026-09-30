@@ -1,0 +1,157 @@
+<!doctype html>
+<!--
+PROTOTYPE (throwaway): three hero signature treatments for the portfolio redesign.
+Question: which gives the "that's a cool portfolio" reaction without a neural-net cliche?
+Switch with the bottom bar, the arrow keys, or ?variant=A|B|C. Theme toggle: the "◐" button.
+Copy is placeholder in the spirit of the decided positioning (plain identity line + one scope sentence).
+Open by double-clicking this file. No build, no persistence.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PROTOTYPE hero signature</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,100..900&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf8f4;--fg:#1a1a1a;--mute:#6b675f;--rule:#dcd7cc;--accent:#1d4ed8;--heat:29,78,216}
+:root[data-theme=dark]{--bg:#111110;--fg:#ecebe6;--mute:#8d8a82;--rule:#2b2a27;--accent:#fb923c;--heat:251,146,60}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 Inter,system-ui,sans-serif;transition:background .3s,color .3s}
+header.bar{max-width:880px;margin:0 auto;padding:22px 24px;display:flex;justify-content:space-between;color:var(--mute);font-size:14px}
+header.bar nav{display:flex;gap:22px}
+main{max-width:880px;margin:0 auto;padding:6vh 24px 20vh}
+.hero{display:grid;grid-template-columns:1fr 96px;gap:32px;align-items:start}
+.hero img{width:96px;height:96px;object-fit:cover;border-radius:50%;filter:grayscale(.15);grid-column:2;grid-row:1}
+.hero .text{grid-column:1;grid-row:1}
+@media(max-width:640px){.hero{grid-template-columns:1fr}.hero img{grid-column:1;grid-row:1;width:72px;height:72px}.hero .text{grid-row:2}}
+.sub{color:var(--mute);font-size:clamp(17px,2.2vw,21px);max-width:34em;margin:26px 0 30px}
+.cta{display:flex;gap:22px;align-items:center;font-size:15px}
+.cta a{color:var(--fg)}
+.cta .primary{border:1px solid var(--fg);padding:10px 18px;border-radius:999px;text-decoration:none}
+.cta .primary:hover{background:var(--fg);color:var(--bg)}
+.cta .sec{color:var(--mute)}
+.note{margin-top:14vh;border-top:1px solid var(--rule);padding-top:14px;font:13px/1.5 'JetBrains Mono',monospace;color:var(--mute)}
+h1{margin:0;font-weight:500;letter-spacing:-.02em}
+
+/* A: attention heatmap */
+.A h1{font:500 clamp(36px,6.4vw,68px)/1.12 Fraunces,serif;letter-spacing:-.02em}
+.A .tok{display:inline-block;padding:0 .08em;border-radius:.12em;cursor:default;background:rgba(var(--heat),var(--w,0));transition:background .18s}
+.A .tok.q{outline:1px solid var(--accent)}
+.A .hint{font:13px 'JetBrains Mono',monospace;color:var(--mute);margin-top:18px;min-height:1.5em}
+
+/* B: token stream */
+.B h1{font:500 clamp(36px,6.4vw,68px)/1.12 Fraunces,serif}
+.B .tok{display:inline-block;position:relative;opacity:0;transform:translateY(.15em);transition:opacity .25s,transform .25s}
+.B .tok.on{opacity:1;transform:none}
+.B .chip{position:absolute;left:0;top:100%;margin-top:6px;font:11px/1.35 'JetBrains Mono',monospace;color:var(--mute);white-space:nowrap;opacity:0;transition:opacity .3s;pointer-events:none;letter-spacing:0}
+.B .chip b{color:var(--accent);font-weight:400}
+.B .tok.on .chip{opacity:1}
+.B.done .tok .chip{opacity:0}
+.B.done .tok:hover .chip{opacity:1}
+.B .caret{display:inline-block;width:.09em;height:.95em;background:var(--accent);vertical-align:-.1em;margin-left:.06em;animation:bl 1s steps(2) infinite}
+.B.done .caret{display:none}
+@keyframes bl{50%{opacity:0}}
+.B .replay{background:none;border:0;color:var(--mute);font:13px 'JetBrains Mono',monospace;cursor:pointer;padding:0;margin-top:18px}
+.B .sub{opacity:0;transition:opacity .6s}.B.done .sub,.B.done .cta{opacity:1}
+.B .cta{opacity:0;transition:opacity .6s}
+.B .stream-pad{padding-bottom:2.2em}
+
+/* C: typographic motion only */
+.C h1{font-family:Fraunces,serif;font-size:clamp(44px,9.5vw,112px);line-height:1.02;letter-spacing:-.035em}
+.C .ch{display:inline-block;font-variation-settings:'wght' var(--wg,300),'opsz' 144;transition:font-variation-settings .12s}
+.C .line{display:block;overflow:hidden}
+.C .line>span{display:block;animation:up .9s cubic-bezier(.2,.7,.2,1) both}
+.C .line:nth-child(2)>span{animation-delay:.12s}
+.C .line:nth-child(3)>span{animation-delay:.24s}
+@keyframes up{from{transform:translateY(105%)}}
+.C h1 em{font-style:italic;color:var(--accent)}
+
+/* switcher */
+#sw{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:6px;align-items:center;background:#111;color:#fff;border-radius:999px;padding:6px 8px;box-shadow:0 6px 24px rgba(0,0,0,.35);font:13px system-ui;z-index:9}
+#sw button{background:#2a2a2a;color:#fff;border:0;border-radius:999px;min-width:32px;height:32px;cursor:pointer;font-size:15px}
+#sw span{padding:0 10px;min-width:180px;text-align:center}
+@media (prefers-reduced-motion:reduce){.C .line>span{animation:none}.B .tok{transition:none}}
+</style>
+</head>
+<body>
+<header class="bar"><span>Rama Ranuh</span><nav><a>Projects</a><a>Experience</a><a>More work</a><a>Contact</a></nav></header>
+<main id="root"></main>
+<div id="sw"><button id="prev" aria-label="previous">←</button><span id="lab"></span><button id="next" aria-label="next">→</button><button id="th" aria-label="theme">◐</button></div>
+
+<script>
+const VARIANTS=[
+ {k:'A',name:'Attention heatmap',note:'A: each word is a token. Hover a word and every other word lights up by how strongly it "attends" to it (hand-picked weights, not a real model). Idle: a query walks the sentence on its own. Static text underneath, so it reads fine without the effect.'},
+ {k:'B',name:'Token stream',note:'B: the line is generated token by token with a blinking caret; each token briefly shows its probability and runner-up. Ends on the plain sentence; hover a word to see its chip again; click "replay". The runner-up under "Engineer" is the joke: "Scientist 3%".'},
+ {k:'C',name:'Typographic motion only',note:'C: no data-viz idea at all. Big variable serif; letter weight swells toward the cursor (thick near, thin far), lines rise in on load. Cheapest, most editorial, least "AI".'}
+];
+const SUB='I build and evaluate LLM applications that run locally and cite their sources.';
+const root=document.getElementById('root'),lab=document.getElementById('lab');
+let cleanup=()=>{};
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+function shell(cls,h1,extra=''){
+ return `<div class="${cls}" id="v"><div class="hero"><div class="text"><h1>${h1}</h1>${extra}<p class="sub">${SUB}</p>
+ <div class="cta"><a class="primary" href="mailto:ramadha.ranuh@gmail.com">Email me</a><a class="sec" href="#">CV</a><a class="sec" href="#">GitHub</a></div></div>
+ <img src="../../images/image_1.JPEG" alt="Rama Ranuh"></div>
+ <div class="note">${VARIANTS.find(v=>v.k===cls.split(' ')[0]).note}</div></div>`;
+}
+
+/* ---------- A ---------- */
+function mountA(){
+ const words=["I'm","Rama","Ranuh,","an","AI","Engineer."];
+ // affinity[i][j]: how much token i attends to j (hand-picked so it looks plausible)
+ const aff=[[.2,.5,.4,.1,.1,.2],[.3,.1,.9,.1,.2,.3],[.2,.9,.1,.1,.2,.3],[.1,.2,.2,.1,.8,.7],[.1,.2,.3,.3,.1,.95],[.2,.4,.5,.4,.95,.1]];
+ root.innerHTML=shell('A',words.map((w,i)=>`<span class="tok" data-i="${i}">${w}</span>`).join(' '),'');
+ const v=document.getElementById('v');v.querySelector('.text').insertAdjacentHTML('beforeend','<div class="hint" id="hint"></div>');
+ const toks=[...v.querySelectorAll('.tok')],hint=v.querySelector('#hint');
+ const show=q=>{toks.forEach((t,j)=>{t.style.setProperty('--w',q<0?0:(j===q?0:aff[q][j]*.55).toFixed(2));t.classList.toggle('q',j===q)});
+  hint.textContent=q<0?'':`query "${words[q].replace(/[.,]/,'')}" attends to: `+toks.map((t,j)=>[j,aff[q][j]]).filter(x=>x[0]!==q).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>words[x[0]].replace(/[.,]/,'')+' '+x[1].toFixed(2)).join(', ')};
+ let hovering=false,i=0,timer;
+ toks.forEach((t,j)=>{t.onmouseenter=()=>{hovering=true;show(j)};t.onmouseleave=()=>{hovering=false;show(-1)}});
+ if(!reduce){timer=setInterval(()=>{if(!hovering){show(i);i=(i+1)%toks.length}},1400);show(4);i=5}
+ cleanup=()=>clearInterval(timer);
+}
+
+/* ---------- B ---------- */
+function mountB(){
+ const T=[["I'm",.62,"My",.21],[" Rama",.71,"Claude",.09],[" Ranuh",.93,"Rama",.02],[",",.55,".",.3],[" an",.68,"a",.19],[" AI",.74,"ML",.12],[" Engineer",.81,"Scientist",.03],[".",.97,"!",.01]];
+ root.innerHTML=shell('B stream-pad',T.map((t,i)=>`<span class="tok" data-i="${i}">${t[0].replace(' ','&nbsp;').replace(/^&nbsp;/,'')}<span class="chip"><b>${(t[1]*100|0)}%</b> ${t[2]} ${(t[3]*100|0)}%</span></span>`).join(' ').replace(/ (?=<span class="tok" data-i="[3|7]")/g,'')
+  +'<span class="caret"></span>','<button class="replay" id="rp" hidden>↻ replay</button>');
+ const v=document.getElementById('v'),toks=[...v.querySelectorAll('.tok')],rp=v.querySelector('#rp');
+ let timers=[];
+ const run=()=>{timers.forEach(clearTimeout);timers=[];v.classList.remove('done');rp.hidden=true;toks.forEach(t=>t.classList.remove('on'));
+  toks.forEach((t,i)=>timers.push(setTimeout(()=>t.classList.add('on'),(reduce?0:450+i*420))));
+  timers.push(setTimeout(()=>{v.classList.add('done');rp.hidden=false},(reduce?0:450+toks.length*420+900)))};
+ rp.onclick=run;run();
+ cleanup=()=>timers.forEach(clearTimeout);
+}
+
+/* ---------- C ---------- */
+function mountC(){
+ const lines=["I'm Rama Ranuh,","an <em>AI Engineer.</em>"];
+ const split=s=>s.replace(/<em>|<\/em>/g,m=>'\u0001'+m).split(/(\u0001<\/?em>)/).map(p=>p==='\u0001<em>'?'<em>':p==='\u0001</em>'?'</em>':p.split(' ').map(w=>w?`<span style="display:inline-block;white-space:nowrap">${[...w].map(c=>`<span class="ch">${c}</span>`).join('')}</span>`:'').join(' ')).join('');
+ root.innerHTML=shell('C',lines.map(l=>`<span class="line"><span>${split(l)}</span></span>`).join(''),'');
+ const chs=[...root.querySelectorAll('.ch')];
+ const move=e=>{chs.forEach(c=>{const r=c.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),d=Math.hypot(dx,dy);c.style.setProperty('--wg',Math.round(300+600*Math.max(0,1-d/260)))})};
+ if(!reduce)addEventListener('pointermove',move);
+ chs.forEach(c=>c.style.setProperty('--wg',reduce?500:300));
+ cleanup=()=>removeEventListener('pointermove',move);
+}
+
+const mounts={A:mountA,B:mountB,C:mountC};
+function go(k){
+ cleanup();const v=VARIANTS.find(x=>x.k===k)||VARIANTS[0];
+ mounts[v.k]();lab.textContent=`${v.k} (${v.name})`;
+ const u=new URL(location);u.searchParams.set('variant',v.k);history.replaceState(null,'',u);
+}
+const cur=()=>(new URLSearchParams(location.search).get('variant')||'A').toUpperCase();
+const step=d=>{const i=VARIANTS.findIndex(v=>v.k===cur());go(VARIANTS[(i+d+VARIANTS.length)%VARIANTS.length].k)};
+prev.onclick=()=>step(-1);next.onclick=()=>step(1);
+addEventListener('keydown',e=>{if(/INPUT|TEXTAREA/.test(document.activeElement.tagName))return;if(e.key==='ArrowLeft')step(-1);if(e.key==='ArrowRight')step(1)});
+th.onclick=()=>{const d=document.documentElement;d.dataset.theme=d.dataset.theme==='dark'?'light':'dark'};
+if(matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.dataset.theme='dark';
+go(cur());
+</script>
+</body>
+</html>
