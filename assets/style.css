@@ -29,6 +29,13 @@ ul,ol{list-style:none}
 .wrap{max-width:980px;margin:0 auto;padding:0 28px}
 .mute{color:var(--mute)}
 
+/* theme switch: circular reveal from the toggle (see hero.js) */
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-image-pair(root){isolation:auto}
+.vt-in::view-transition-old(root){z-index:2}
+.vt-in::view-transition-new(root){z-index:1}
+.vt,.vt *,.vt *::before,.vt *::after{transition:none!important}
+
 .skip{position:absolute;left:-999px;top:8px;background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:6px;z-index:20}
 .skip:focus{left:8px}
 

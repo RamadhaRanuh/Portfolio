@@ -3,10 +3,32 @@
   var root = document.documentElement, btn = document.getElementById('theme');
   if (!btn) return;
   var sync = function () { btn.setAttribute('aria-pressed', String(root.dataset.theme === 'dark')); };
-  btn.addEventListener('click', function () {
+  var last = null;
+  function apply() {
     root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
     try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
     sync();
+  }
+  // Going dark, the new theme grows out of the toggle as a circle; going light, the dark page
+  // shrinks back into it. Browsers without view transitions keep the CSS colour fade.
+  btn.addEventListener('click', function () {
+    if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) { apply(); return; }
+    var r = btn.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+    var end = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) * 1.1;
+    var at = ' at ' + x + 'px ' + y + 'px)';
+    var frames = ['circle(0px' + at, 'circle(' + end + 'px' + at];
+    var shrink = root.dataset.theme === 'dark';
+    if (shrink) frames.reverse();
+    root.classList.toggle('vt-in', shrink);
+    root.classList.add('vt'); // keeps the page's own colour fades out of the snapshot
+    var t = document.startViewTransition(apply); last = t;
+    t.ready.then(function () {
+      root.animate({ clipPath: frames }, {
+        duration: 450, easing: 'cubic-bezier(.3,0,.2,1)', fill: 'forwards',
+        pseudoElement: shrink ? '::view-transition-old(root)' : '::view-transition-new(root)'
+      });
+    }).catch(function () {}); // a newer toggle aborted this one
+    t.finished.finally(function () { if (last === t) root.classList.remove('vt', 'vt-in'); });
   });
   sync();
 })();
