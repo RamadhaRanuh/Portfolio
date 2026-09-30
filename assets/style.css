@@ -95,6 +95,28 @@ h2::before{content:"// ";color:var(--accent)}
 .media .ln{stroke:var(--mute);fill:none}
 .media .bar-bg{fill:var(--rule)}
 
+/* ask this page (see features.js) */
+.ask{margin-top:30px;max-width:40em;border:1px solid var(--rule);border-radius:12px;background:var(--soft);padding:12px 14px;transition:background-color .3s,border-color .3s}
+.ask label{display:block;font:12px var(--mono);color:var(--mute)}
+.ask label::first-letter{color:var(--accent)}
+.ask .row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.ask input{flex:1;min-width:0;font:15px var(--sans);height:40px;padding:0 12px;border:1px solid var(--rule);border-radius:8px;background:var(--bg);color:var(--fg)}
+.ask kbd{font:12px var(--mono);color:var(--mute);border:1px solid var(--rule);border-radius:5px;padding:2px 7px}
+.ask .chips{display:none;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ask:focus-within .chips,.ask.no-match .chips{display:flex}
+.ask.has-answer .chips{display:none}
+.ask .chips button{font:12px var(--sans);color:var(--mute);background:none;border:1px solid var(--rule);border-radius:999px;padding:4px 11px;cursor:pointer}
+.ask .chips button:hover{color:var(--accent);border-color:var(--accent)}
+.ask .answer{font-size:15px;line-height:1.7;margin-top:12px}
+.ask .answer b{font-weight:500;background:rgba(var(--heat),.18);border-radius:2px}
+.ask .cite{font:11px/20px var(--mono);width:20px;height:20px;padding:0;text-align:center;border:0;border-radius:5px;background:var(--accent);color:var(--on-accent);cursor:pointer;vertical-align:1px}
+.ask .srcs{font:12px var(--mono);color:var(--mute);margin-top:8px}
+.ask .none{color:var(--mute);font-size:14px;margin-top:10px}
+::highlight(ask){background-color:rgba(var(--heat),.32)}
+.cited{outline:2px solid var(--accent);outline-offset:6px;border-radius:4px}
+.stats .cited{outline-offset:-2px}
+.ask-back{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:9;font:13px var(--mono);background:var(--accent);color:var(--on-accent);border:0;border-radius:999px;padding:10px 16px;box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer}
+
 /* diagrams that play on hover, tap or the play button (see features.js) */
 .media svg rect,.media svg text,.media svg line{transition:opacity .2s,fill .2s,stroke .2s,width .9s cubic-bezier(.2,.7,.2,1)}
 .media svg.has-on rect:not(.on):not(.bar-bg),.media svg.has-on g[font-size] text:not(.on){opacity:.38}
@@ -152,6 +174,8 @@ footer.wrap{margin-top:clamp(72px,12vh,120px);padding-top:22px;padding-bottom:40
   .bar nav{flex:1;justify-content:space-between}
   .hero{grid-template-columns:1fr;gap:22px}
   .hero img{order:-1;width:72px;height:72px}
+  .ask{max-width:none}
+  .ask kbd{display:none}
   .card{grid-template-columns:1fr;gap:20px;padding:18px}
   .links{margin-left:0;width:100%;margin-top:8px}
   .time li{grid-template-columns:1fr;gap:2px}
@@ -159,7 +183,7 @@ footer.wrap{margin-top:clamp(72px,12vh,120px);padding-top:22px;padding-bottom:40
   .more .d{grid-column:1/-1;grid-row:2}
   .more .x{min-width:0}
 }
-@media (hover:none){.tok{cursor:pointer;-webkit-user-select:none;user-select:none}}
+@media (hover:none){.ask kbd{display:none}.tok{cursor:pointer;-webkit-user-select:none;user-select:none}}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{transition:none!important;animation:none!important}

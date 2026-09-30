@@ -68,7 +68,7 @@
   ];
   var word = function (i) { return toks[i].textContent.replace(/[.,]/g, ''); };
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var pinned = -1, hovering = false, timer = null, next = 5;
+  var pinned = -1, hovering = false, paused = false, timer = null, next = 5;
 
   function show(q) {
     toks.forEach(function (t, j) {
@@ -107,10 +107,17 @@
     pinned = -1; show(-1);
   });
 
+  // The idle walk rests while Ask this page is in use (features.js sends this event).
+  document.addEventListener('ask:active', function (e) {
+    if (paused === e.detail) return;
+    paused = e.detail;
+    if (paused && !hovering) show(pinned);
+  });
+
   if (!reduce) {
     show(4);
     timer = setInterval(function () {
-      if (hovering) return;
+      if (hovering || paused) return;
       show(next); next = (next + 1) % toks.length;
     }, 1400);
   }
