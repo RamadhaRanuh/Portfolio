@@ -16,18 +16,18 @@
 // presses play, then rests. Nothing moves until they act.
 (function () {
   var NS = 'http://www.w3.org/2000/svg';
-  var svgs = [].slice.call(document.querySelectorAll('.card .media > svg[data-diagram]:not([data-diagram=scopa])')); // chart, pipeline, stacks
-  if (svgs.length !== 3) return;
+  var svgs = {}; // keyed by data-diagram, so cards can be added or reordered
+  [].forEach.call(document.querySelectorAll('.card .media > svg[data-diagram]'), function (s) { svgs[s.dataset.diagram] = s; });
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   function boxes(svg, texts) { // each box is a rect followed by its label
-    return [].slice.call(svg.querySelectorAll('rect')).map(function (r, i) {
+    return !svg ? [] : [].slice.call(svg.querySelectorAll('rect')).map(function (r, i) {
       return { els: [r, r.nextElementSibling], text: texts[i] };
     });
   }
   var TRAIN = [97.43, 98.77, 100, 93.8, 100], TEST = [97.56, 89.74, 87.18, 87.18, 79.49];
   var NAMES = ['YOLO', 'InceptionResNetV2', 'DenseNet201', 'GoogLeNet', 'MobileNet'];
-  var chart = [].slice.call(svgs[0].querySelectorAll('rect:not(.bar-bg)')).map(function (bar, i) {
+  var chart = !svgs.accuracy ? [] : [].slice.call(svgs.accuracy.querySelectorAll('rect:not(.bar-bg)')).map(function (bar, i) {
     var tick = document.createElementNS(NS, 'line'), x = 156 + TRAIN[i] * 2, y = +bar.getAttribute('y');
     tick.setAttribute('x1', x); tick.setAttribute('x2', x); tick.setAttribute('y1', y - 4); tick.setAttribute('y2', y + 20);
     tick.setAttribute('class', 'tick'); bar.parentNode.appendChild(tick);
@@ -39,10 +39,21 @@
     };
   });
   var D = [
-    { svg: svgs[0], steps: chart, name: 'accuracy comparison',
+    { svg: svgs.scopa, name: 'agent pipeline walkthrough',
+      rest: 'An orchestrator agent runs the loop: 10 cycles of 20 items, 200 in all, for $2.05 of GPT-5 calls.',
+      steps: boxes(svgs.scopa, [
+        'About 4,000 posts on X about Indonesian culture and regional dialects, grouped by topic.',
+        'The Data agent pulls one random post through a tool call.',
+        'The Transformator agent distils the post into structured seed data: the theme, the cultural norms, the local terms.',
+        'The Generator agent writes twenty COPA items per seed: a premise, a cause-or-effect question and two choices.',
+        'The Validator agent checks five criteria, logic and cultural relevance among them, and drops near-duplicates with Sentence-BERT and TF-IDF. Failures go back to the Generator.',
+        'The Annotator agent tags what each item tests: language, terminology or culture.',
+        'The Colloquial agent rewrites each item in Jakarta dialect, checked against the original with Sentence-BERT.'
+      ]) },
+    { svg: svgs.accuracy, steps: chart, name: 'accuracy comparison',
       rest: 'Lines mark training accuracy. The further a bar stops short of its line, the more the model overfit.' },
-    { svg: svgs[1], name: 'pipeline walkthrough', rest: 'Index once, then retrieve and answer per question.',
-      steps: boxes(svgs[1], [
+    { svg: svgs.rag, name: 'pipeline walkthrough', rest: 'Index once, then retrieve and answer per question.',
+      steps: boxes(svgs.rag, [
         'Five volumes of the Gale Encyclopedia of Medicine, as PDFs.',
         'Pages are split into chunks, and each chunk is turned into a vector.',
         'The vectors are stored once in ChromaDB, on disk.',
@@ -50,8 +61,8 @@
         'The chunks closest to the question are fetched from the store.',
         'A local GGUF model writes the answer from those chunks, streamed token by token.'
       ]) },
-    { svg: svgs[2], name: 'architecture walkthrough', rest: 'Two stacks, written block by block in PyTorch.',
-      steps: boxes(svgs[2], [
+    { svg: svgs.stacks, name: 'architecture walkthrough', rest: 'Two stacks, written block by block in PyTorch.',
+      steps: boxes(svgs.stacks, [
         'Each token becomes a vector, plus a signal for where it sits in the sentence.',
         'Every token looks at every other token, through several heads at once.',
         'A small network applied to each token on its own.',
@@ -64,6 +75,7 @@
   ];
 
   D.forEach(function (d) {
+    if (!d.svg) return;
     var cap = document.createElement('p'); cap.className = 'dcap';
     var ctl = document.createElement('div'); ctl.className = 'dctl';
     var btn = document.createElement('button'); btn.type = 'button';

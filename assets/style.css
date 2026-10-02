@@ -129,6 +129,7 @@ h2::before{content:"// ";color:var(--accent)}
 .media svg .tick{stroke:var(--fg);stroke-width:1.5;opacity:0}
 .media svg .tick.on,.media svg.played .tick{opacity:1}
 .media .dcap{font:12px/1.5 var(--mono);color:var(--mute);padding:0 16px;min-height:4.5em;margin:0}
+#scopa .dcap{min-height:6em} /* the validator step runs to four lines */
 .dctl{padding:6px 16px 12px}
 .dctl button{font:12px var(--mono);background:none;border:1px solid var(--rule);color:var(--fg);border-radius:6px;height:28px;padding:0 10px;cursor:pointer}
 .dctl button:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
