@@ -118,6 +118,34 @@
   });
 })();
 
+// More work as cards: the list stays; a toggle under it opens a horizontal shelf of compact
+// cards. Not remembered between visits.
+(function () {
+  var btn = document.querySelector('.mtoggle'), wrap = document.getElementById('more-cards');
+  if (!btn || !wrap) return;
+  var shelf = wrap.querySelector('.shelf'), prev = wrap.querySelector('.prev'), next = wrap.querySelector('.next');
+  function edges() {
+    var end = shelf.scrollLeft + shelf.clientWidth >= shelf.scrollWidth - 2;
+    prev.hidden = shelf.scrollLeft <= 2; next.hidden = end;
+    shelf.classList.toggle('at-end', end);
+  }
+  function set(on) {
+    wrap.hidden = !on; btn.setAttribute('aria-expanded', String(on));
+    btn.textContent = on ? '× hide the cards' : '→ all 7 as cards';
+    if (on) edges();
+  }
+  function step(dir) { // one card at a time
+    var card = shelf.querySelector('.wcard'), gap = parseFloat(getComputedStyle(shelf).columnGap) || 0;
+    shelf.scrollBy({ left: dir * (card.offsetWidth + gap), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }
+  btn.addEventListener('click', function () { set(wrap.hidden); });
+  prev.addEventListener('click', function () { step(-1); });
+  next.addEventListener('click', function () { step(1); });
+  shelf.addEventListener('scroll', edges, { passive: true });
+  addEventListener('resize', function () { if (!wrap.hidden) edges(); });
+  document.addEventListener('shelf:open', function () { if (wrap.hidden) set(true); }); // Ask opens it to show a cited card
+})();
+
 // Ask this page: answers a question by quoting passages from this page. No model, no server,
 // and nothing is generated. Ranking is BM25 over the page's own text plus a small alias map
 // for questions that share no words with it.

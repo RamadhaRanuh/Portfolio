@@ -27,7 +27,7 @@ document.documentElement.dataset.theme=t})();
 </script>
 <link rel="preload" href="assets/fonts/inter-tight-600.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/style.css">
-<noscript><style>.ask{display:none}</style></noscript>
+<noscript><style>.ask,.mtoggle{display:none}</style></noscript>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Person","name":"Rama Ranuh","alternateName":"I Gusti Bagus Ramadha Saverian Ranuh","jobTitle":"AI Engineer","url":"https://ramadharanuh.github.io/Portfolio/","image":"https://ramadharanuh.github.io/Portfolio/assets/img/headshot.webp","sameAs":["https://github.com/RamadhaRanuh","https://www.linkedin.com/in/i-gusti-bagus-ramadha-saverian-ranuh-3310a6274/"]}
 </script>
@@ -280,6 +280,55 @@ document.documentElement.dataset.theme=t})();
 			<li><a href="https://github.com/RamadhaRanuh/Rice-Price-Prediction-Model">Rice price forecasting</a><span class="d">seasonal ARIMA</span><span class="x" aria-hidden="true">↗</span></li>
 			<li><a href="https://github.com/RamadhaRanuh/TutorDek-Software-Engineer">TutorDek</a><span class="d">web app for finding and hiring tutors</span><span class="x" aria-hidden="true">↗</span></li>
 		</ul>
+		<button class="mtoggle" type="button" aria-expanded="false" aria-controls="more-cards">→ all 7 as cards</button>
+		<div class="shelf-wrap" id="more-cards" hidden>
+			<button class="snav prev" type="button" aria-label="Previous card" hidden>‹</button>
+			<div class="shelf" tabindex="0" role="region" aria-label="More work as cards">
+				<article class="wcard">
+					<h3>LLM serving with vLLM and SGLang</h3>
+					<p>Benchmarked SGLang against vLLM under concurrent load at GDP Labs, tuning quantization and data and tensor parallelism, then moved serving to SGLang.</p>
+					<dl class="stats"><div><dt>1.8×</dt><dd>throughput</dd></div><div><dt>up to 70%</dt><dd>lower latency</dd></div></dl>
+					<div class="meta"><span class="tag">SGLang</span><span class="tag">vLLM</span><span class="tag">CUDA</span><span class="tag">Docker</span><span class="links"><span class="p">code private</span></span></div>
+				</article>
+				<article class="wcard">
+					<h3>Speech emotion recognition</h3>
+					<p>Classifies seven emotions from short speech clips with a 1D CNN, and measures how much audio augmentation helps.</p>
+					<dl class="stats"><div><dt>60.6%</dt><dd>test accuracy with augmentation (56.2% without)</dd></div><div><dt>12,162</dt><dd>clips from four datasets</dd></div></dl>
+					<div class="meta"><span class="tag">TensorFlow</span><span class="tag">Librosa</span><span class="links"><a href="https://github.com/RamadhaRanuh/Speech-Emotion-Recognition">code ↗</a></span></div>
+				</article>
+				<article class="wcard">
+					<h3>Plant disease detection</h3>
+					<p>Sorts leaf photos into 38 crop and disease classes, comparing handcrafted features with SVM and Random Forest against fine-tuned CNNs, then serves the model behind an API and a Gradio demo.</p>
+					<dl class="stats"><div><dt>99.3%</dt><dd>test accuracy, ResNet50V2</dd></div><div><dt>90.8%</dt><dd>best classic model (Random Forest)</dd></div></dl>
+					<div class="meta"><span class="tag">TensorFlow</span><span class="tag">scikit-learn</span><span class="tag">FastAPI</span><span class="tag">Gradio</span><span class="links"><a href="https://github.com/RamadhaRanuh/Plant-Disease-Detection-Using-ML-DL">code ↗</a></span></div>
+				</article>
+				<article class="wcard">
+					<h3>Condition classification from drug reviews</h3>
+					<p>Predicts which of 10 conditions a patient's drug review is about, comparing seven classifiers on count, TF-IDF and Word2Vec features.</p>
+					<dl class="stats"><div><dt>94.5%</dt><dd>test accuracy (TF-IDF + logistic regression)</dd></div><div><dt>98,723</dt><dd>reviews from Drugs.com</dd></div></dl>
+					<div class="meta"><span class="tag">scikit-learn</span><span class="tag">XGBoost</span><span class="tag">gensim</span><span class="links"><a href="https://github.com/RamadhaRanuh/Patient-s-Condition-Classification-Using-Drug-Reviews">code ↗</a></span></div>
+				</article>
+				<article class="wcard">
+					<h3>YouTube comment sentiment</h3>
+					<p>Scrapes 30,000 comments through the YouTube API, labels them with VADER, and trains models to reproduce those labels.</p>
+					<dl class="stats"><div><dt>30,000</dt><dd>comments scraped</dd></div><div><dt>90%</dt><dd>agreement with VADER labels (BiLSTM)</dd></div></dl>
+					<div class="meta"><span class="tag">YouTube API</span><span class="tag">NLTK</span><span class="tag">Keras</span><span class="links"><a href="https://github.com/RamadhaRanuh/Sentiment-Analysis-Through-YouTube-Scraping">code ↗</a></span></div>
+				</article>
+				<article class="wcard">
+					<h3>Rice price forecasting</h3>
+					<p>Forecasts monthly Indonesian rice prices 24 months ahead with a seasonal ARIMA, behind a small desktop app.</p>
+					<dl class="stats"><div><dt>5.5 yrs</dt><dd>of weekly prices</dd></div><div><dt>7</dt><dd>rice grades</dd></div></dl>
+					<div class="meta"><span class="tag">statsmodels</span><span class="tag">pmdarima</span><span class="tag">Tkinter</span><span class="links"><a href="https://github.com/RamadhaRanuh/Rice-Price-Prediction-Model">code ↗</a></span></div>
+				</article>
+				<article class="wcard">
+					<h3>TutorDek</h3>
+					<p>Front end for a site where students find and book tutors, with a MySQL schema behind it. A software engineering course project.</p>
+					<dl class="stats"><div><dt>10</dt><dd>pages</dd></div><div><dt>10</dt><dd>database tables</dd></div></dl>
+					<div class="meta"><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span><span class="tag">MySQL</span><span class="links"><a href="https://github.com/RamadhaRanuh/TutorDek-Software-Engineer">code ↗</a></span></div>
+				</article>
+			</div>
+			<button class="snav next" type="button" aria-label="Next card">›</button>
+		</div>
 	</section>
 
 	<section id="contact" class="contact" aria-labelledby="h-contact">
