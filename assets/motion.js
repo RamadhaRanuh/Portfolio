@@ -92,6 +92,34 @@
     hero.addEventListener('pointerleave', function () { follow(-1); });
   }
 
+  // 5. A faint glow drifts behind the hero: the one effect that loops on its own. It pauses while
+  // the hero is off screen or the tab is hidden.
+  if (hero) {
+    var glow = document.createElement('div'), seen = true;
+    glow.className = 'fx-glow'; glow.setAttribute('aria-hidden', 'true'); hero.prepend(glow);
+    var still = function () { glow.classList.toggle('paused', !seen || document.hidden); };
+    new IntersectionObserver(function (es) { seen = es[0].isIntersecting; still(); }).observe(hero);
+    document.addEventListener('visibilitychange', still);
+  }
+
+  // 7. With a mouse, project cards tilt slightly toward the pointer under a faint highlight.
+  // They ease flat over a link or button, so nothing moves under a click.
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    $$('.card').forEach(function (c) {
+      c.classList.add('fx-tilt');
+      function flat() { c.style.setProperty('--rx', '0deg'); c.style.setProperty('--ry', '0deg'); }
+      c.addEventListener('pointermove', function (e) {
+        if (e.pointerType !== 'mouse') return;
+        var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        c.style.setProperty('--mx', (x * 100).toFixed(1) + '%'); c.style.setProperty('--my', (y * 100).toFixed(1) + '%');
+        if (e.target.closest('a, button')) { flat(); return; }
+        c.style.setProperty('--rx', ((.5 - y) * 3).toFixed(2) + 'deg');
+        c.style.setProperty('--ry', ((x - .5) * 4).toFixed(2) + 'deg');
+      });
+      c.addEventListener('pointerleave', flat);
+    });
+  }
+
   // 8. Section labels type themselves out, unless the visitor jumped straight to that section.
   var heads = $$('main section h2');
   function jumped(hash) {

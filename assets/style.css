@@ -218,6 +218,20 @@ footer.wrap{margin-top:clamp(72px,12vh,120px);padding-top:22px;padding-bottom:40
 .lede.done .fx-caret{animation:fx-out .4s forwards}
 .lede.done .fx-w{opacity:1;animation:none}
 @keyframes fx-out{to{opacity:0}}
+/* 5. ambient glow behind the hero */
+main{overflow-x:clip}
+.hero{position:relative;isolation:isolate}
+.fx-glow{position:absolute;z-index:-1;inset:-120px -10% auto -10%;height:560px;pointer-events:none;opacity:.3;filter:blur(70px);
+  background:radial-gradient(closest-side at 30% 40%,rgba(var(--heat),.30),transparent),radial-gradient(closest-side at 75% 30%,rgba(var(--heat),.18),transparent);
+  animation:fx-drift 40s ease-in-out infinite alternate}
+.fx-glow.paused{animation-play-state:paused}
+@keyframes fx-drift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(3%,2%) scale(1.04)}100%{transform:translate(-3%,1%) scale(.98)}}
+/* 7. card tilt */
+.fx-tilt{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease,background-color .3s,border-color .3s,opacity .6s ease var(--d,0ms),translate .6s cubic-bezier(.2,.7,.2,1) var(--d,0ms);position:relative}
+.fx-tilt::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .25s;
+  background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(var(--heat),.05),transparent 60%)}
+.fx-tilt:hover::after{opacity:1}
+.fx-rise.fx-now{transition:transform .25s ease}
 /* 8. section labels type out */
 .fx-typing::after{content:"▍";color:var(--accent);margin-left:1px;animation:fx-blink .9s steps(1) infinite}
 @keyframes fx-blink{50%{opacity:0}}
