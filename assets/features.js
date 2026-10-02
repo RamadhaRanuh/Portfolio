@@ -146,18 +146,74 @@
   document.addEventListener('shelf:open', function () { if (wrap.hidden) set(true); }); // Ask opens it to show a cited card
 })();
 
-// Ask this page: answers a question by quoting passages from this page. No model, no server,
-// and nothing is generated. Ranking is BM25 over the page's own text plus a small alias map
-// for questions that share no words with it.
+// Ask this page: no model, no server. A question first tries the answers Rama wrote ahead of
+// time (assets/ask.json, fetched on first focus), then quotes the page itself. Both are ranked
+// with BM25 plus an alias map for questions that share no words with the page, and a question
+// the page can't answer still gets the closest passages and questions it can.
 (function () {
   var box = document.querySelector('.ask');
   if (!box) return;
   var input = box.querySelector('input'), out = box.querySelector('.out'), chipBox = box.querySelector('.chips');
-  var $$ = function (s) { return [].slice.call(document.querySelectorAll(s)); };
-  var SUGGEST = ['What did he do at GDP Labs?', 'Which project has citations?', 'Where did he study?', 'How accurate was the skin model?'];
+  var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
+  var SUGGEST = ['What did he do at GDP Labs?', 'Has he built AI agents?', 'How does he evaluate LLM apps?', "What's his strongest project?"];
+  var T_CURATED = 2.5, T_DIRECT = 3.5; // tuned on the fixed question list
   var WORD = /[A-Za-z0-9]+(?:\.[0-9]+)?/g;
+  var STOP = {}, ALIAS = {}, CURATED = [];
+  ("a an and are as at be by did do does for from had has have he her him his how i in is it its me my of on or our she that the their them they this to was were what when where which who whom why will with you your much many get got can could would about into than then there any rama ranuh he's whats what's should first look")
+    .split(' ').forEach(function (w) { STOP[w] = 1; });
+  function stem(w) {
+    if (w.length > 5 && /ing$/.test(w)) return w.slice(0, -3);
+    if (w.length > 4 && /e[ds]$/.test(w)) return w.slice(0, -2);
+    if (w.length > 3 && /s$/.test(w) && !/ss$/.test(w)) return w.slice(0, -1);
+    return w;
+  }
+  function words(s) { return (s.toLowerCase().match(WORD) || []).filter(function (w) { return !STOP[w]; }); }
+  function terms(q) {
+    var t = [];
+    words(q).forEach(function (w) {
+      t.push([stem(w), 1]);
+      if (ALIAS[w]) ALIAS[w].split(' ').forEach(function (a) { t.push([stem(a), .8]); });
+    });
+    return t;
+  }
 
-  // ---- passages: one per paragraph, stat, timeline row or list row, with its heading
+  // ---- one BM25 index, used for page passages and for the curated questions
+  function index(docs) { // docs: [{text, head, named}]
+    var DF = {}, AVG = 0;
+    docs.forEach(function (d) {
+      d.t = words(d.text).map(stem);
+      d.tf = {}; d.t.forEach(function (w) { d.tf[w] = (d.tf[w] || 0) + 1; });
+      d.hf = {}; words(d.head || '').forEach(function (w) { d.hf[stem(w)] = 1; });
+      Object.keys(d.tf).concat(Object.keys(d.hf).filter(function (w) { return !d.tf[w]; }))
+        .forEach(function (w) { DF[w] = (DF[w] || 0) + 1; });
+      AVG += d.t.length / docs.length;
+    });
+    function idf(w) { return Math.log(1 + (docs.length - DF[w] + .5) / (DF[w] + .5)); }
+    function lookup(tf, q) { // exact term, else a shared prefix of four or more letters
+      if (tf[q]) return [q];
+      if (q.length < 4) return [];
+      return Object.keys(tf).filter(function (w) { return w.length >= 4 && (w.indexOf(q) === 0 || q.indexOf(w) === 0); });
+    }
+    return function (q) {
+      var tt = terms(q);
+      return docs.map(function (d) {
+        var score = 0, hit = {};
+        tt.forEach(function (t) {
+          lookup(d.tf, t[0]).forEach(function (w) {
+            if (hit[w] === t) return; // a word counts once per query term
+            var f = d.tf[w];
+            score += t[1] * idf(w) * f * 2.2 / (f + 1.2 * (.6 + .4 * d.t.length / AVG));
+            hit[w] = t;
+          });
+          // A word from the heading counts strongly for the main paragraph, weakly for its stats.
+          if (d.hf[t[0]]) score += t[1] * idf(t[0]) * (d.named === false ? .5 : 2);
+        });
+        return { d: d, score: score, hit: hit };
+      }).filter(function (r) { return r.score > 0; }).sort(function (a, b) { return b.score - a.score; });
+    };
+  }
+
+  // ---- passages: one per paragraph, stat, timeline row, list row or shelf card, with its heading
   var P = [];
   function add(el, head, named) { // named: a question about the heading should land here
     var text = (el.innerText || el.textContent).replace(/\s+/g, ' ').trim();
@@ -166,69 +222,34 @@
   $$('.hero h1, .hero .lede, .hero .about').forEach(function (el) { add(el, 'about'); });
   $$('.card').forEach(function (c) {
     var h = c.querySelector('h3').textContent.trim();
-    [].forEach.call(c.querySelectorAll('div:first-child > p:not(.venue)'), function (el) { add(el, h); });
-    [].forEach.call(c.querySelectorAll('.venue, .stats div'), function (el) { add(el, h, false); });
+    $$('div:first-child > p:not(.venue)', c).forEach(function (el) { add(el, h); });
+    $$('.venue, .stats div', c).forEach(function (el) { add(el, h, false); });
   });
   $$('.time li, .also').forEach(function (el) { add(el, 'experience'); });
-  $$('.more li').forEach(function (el) { add(el, 'more work'); });
+  $$('.more li, .wcard p').forEach(function (el) { add(el, 'more work'); });
   $$('.contact > p, .contact .mail').forEach(function (el) { add(el, 'contact'); });
+  var searchP = index(P), searchC = function () { return []; };
 
-  // ---- search
-  var STOP = {};
-  'a an and are as at be by did do does for from had has have he her him his how i in is it its me my of on or our she that the their them they this to was were what when where which who whom why will with you your much many get got can could would about into than then there'
-    .split(' ').forEach(function (w) { STOP[w] = 1; });
-  var ALIAS = {
-    study: 'university bachelor binus', studied: 'university bachelor binus', school: 'university bachelor', education: 'university bachelor gpa', degree: 'bachelor university', college: 'university', graduate: 'bachelor university',
-    faster: 'throughput latency', fast: 'throughput latency median', speed: 'throughput latency', performance: 'throughput latency', inference: 'serving sglang',
-    work: 'engineer gdp labs', works: 'engineer gdp labs', job: 'engineer gdp labs', company: 'gdp labs', employer: 'gdp labs', role: 'engineer',
-    publication: 'paper', publications: 'paper', published: 'paper', research: 'paper',
-    reach: 'email', hire: 'email', contact: 'email', mail: 'email',
-    live: 'jakarta based', located: 'jakarta based', location: 'jakarta based', country: 'jakarta',
-    rag: 'retrieval', accurate: 'accuracy correctness', cite: 'citations', sources: 'citations', private: 'local', offline: 'local',
-    llm: 'model', grade: 'gpa', grades: 'gpa'
-  };
-  function stem(w) {
-    if (w.length > 5 && /ing$/.test(w)) return w.slice(0, -3);
-    if (w.length > 4 && /e[ds]$/.test(w)) return w.slice(0, -2);
-    if (w.length > 3 && /s$/.test(w) && !/ss$/.test(w)) return w.slice(0, -1);
-    return w;
-  }
-  function words(s) { return (s.toLowerCase().match(WORD) || []).filter(function (w) { return !STOP[w]; }); }
-  var DF = {}, AVG = 0;
-  P.forEach(function (p) {
-    p.t = words(p.text).map(stem);
-    p.tf = {}; p.t.forEach(function (w) { p.tf[w] = (p.tf[w] || 0) + 1; });
-    p.hf = {}; words(p.head).forEach(function (w) { p.hf[stem(w)] = 1; });
-    Object.keys(p.tf).concat(Object.keys(p.hf).filter(function (w) { return !p.tf[w]; }))
-      .forEach(function (w) { DF[w] = (DF[w] || 0) + 1; });
-    AVG += p.t.length / P.length;
-  });
-  function idf(w) { return Math.log(1 + (P.length - DF[w] + .5) / (DF[w] + .5)); }
-  function lookup(tf, q) { // exact term, else a shared prefix of four or more letters
-    if (tf[q]) return [q];
-    if (q.length < 4) return [];
-    return Object.keys(tf).filter(function (w) { return w.length >= 4 && (w.indexOf(q) === 0 || q.indexOf(w) === 0); });
-  }
-  function search(question) {
-    var terms = [];
-    words(question).forEach(function (w) {
-      terms.push([stem(w), 1]);
-      if (ALIAS[w]) ALIAS[w].split(' ').forEach(function (a) { terms.push([stem(a), .8]); });
-    });
-    var hits = P.map(function (p) {
-      var score = 0, hit = {};
-      terms.forEach(function (t) {
-        lookup(p.tf, t[0]).forEach(function (w) {
-          var f = p.tf[w];
-          score += t[1] * idf(w) * f * 2.2 / (f + 1.2 * (.6 + .4 * p.t.length / AVG));
-          hit[w] = 1;
-        });
-        // A word from the heading counts strongly for the main paragraph, weakly for its stats.
-        if (p.hf[t[0]]) score += t[1] * idf(t[0]) * (p.named ? 2 : .5);
+  // ---- curated answers, loaded once; a question asked before they arrive waits for them
+  var loading = null;
+  function load() {
+    if (!loading) loading = fetch('assets/ask.json').then(function (r) { return r.json(); }).then(function (data) {
+      ALIAS = data.alias || {};
+      CURATED = data.curated.map(function (c) {
+        var cites = c.cite.map(function (s) { return P.filter(function (p) { return p.text.indexOf(s) >= 0; })[0]; }).filter(Boolean);
+        return { c: c, text: c.q + ' ' + c.also + ' ' + c.also + ' ' + c.a, cites: cites };
       });
-      return { p: p, score: score, hit: hit };
-    }).filter(function (r) { return r.score > 0; }).sort(function (a, b) { return b.score - a.score; });
-    return hits.filter(function (r) { return r.score >= hits[0].score * .35; }).slice(0, 3);
+      searchC = index(CURATED);
+    }).catch(function () {}); // without the file, the box still quotes the page
+    return loading;
+  }
+  function answer(q) {
+    var cur = searchC(q), pas = searchP(q), top = pas.length ? pas[0].score : 0;
+    var quotes = pas.filter(function (r) { return r.score >= top * .35; }).slice(0, 3);
+    // A curated answer wins unless the page itself matches far better (a question about one card).
+    if (cur.length && cur[0].score >= T_CURATED && top < cur[0].score * 2) return { kind: 'curated', cur: cur, top: top };
+    if (top >= T_DIRECT) return { kind: 'quotes', quotes: quotes, cur: cur, top: top };
+    return { kind: 'fallback', quotes: pas.slice(0, 2), cur: cur, top: top };
   }
 
   // ---- marks on the page: an outline on each cited passage, a tint on the matched words
@@ -236,12 +257,12 @@
     $$('.cited').forEach(function (e) { e.classList.remove('cited'); });
     if (window.CSS && CSS.highlights) CSS.highlights.delete('ask');
   }
-  function mark(results) {
+  function mark(cited) { // cited: [{d, hit}]
     clearMarks();
     var ranges = [];
-    results.forEach(function (r) {
-      r.p.el.classList.add('cited');
-      var walk = document.createTreeWalker(r.p.el, NodeFilter.SHOW_TEXT), n, m;
+    cited.forEach(function (r) {
+      r.d.el.classList.add('cited');
+      var walk = document.createTreeWalker(r.d.el, NodeFilter.SHOW_TEXT), n, m;
       while ((n = walk.nextNode())) {
         WORD.lastIndex = 0;
         while ((m = WORD.exec(n.data))) {
@@ -258,59 +279,100 @@
   // ---- rendering
   var back = null;
   function dropBack() { if (back) { back.remove(); back = null; } }
-  function goTo(r) {
+  function goTo(p) {
     var calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    r.p.el.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' });
+    if (p.el.closest('[hidden]')) document.dispatchEvent(new CustomEvent('shelf:open')); // a card on the closed shelf
+    document.dispatchEvent(new CustomEvent('ask:reveal', { detail: p.el })); // motion.js shows it without its rise-in
+    p.el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: calm ? 'auto' : 'smooth' });
     if (!matchMedia('(max-width: 720px)').matches || back) return;
     back = document.createElement('button'); back.type = 'button'; back.className = 'ask-back'; back.textContent = '↑ back to answer';
     back.onclick = function () { box.scrollIntoView({ block: 'center', behavior: calm ? 'auto' : 'smooth' }); dropBack(); };
     document.body.appendChild(back);
   }
   function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function quote(r) {
+    return '“' + esc(r.d.text).replace(WORD, function (w) { return r.hit[stem(w.toLowerCase())] ? '<b>' + w + '</b>' : w; }) + '” ';
+  }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
+  function chip(text, parent) {
+    var b = el('button', '', text); b.type = 'button';
+    b.onclick = function () { ask(text); input.focus(); };
+    parent.appendChild(b);
+  }
   function active() {
     var on = box.contains(document.activeElement) || box.classList.contains('has-answer');
     document.dispatchEvent(new CustomEvent('ask:active', { detail: on })); // hero.js pauses the heatmap
   }
-  function run(q) {
-    input.value = q; out.innerHTML = ''; dropBack();
+
+  function render(q) {
+    out.innerHTML = ''; dropBack();
     box.classList.remove('has-answer', 'no-match');
-    var results = q.trim() ? search(q) : [];
-    if (!results.length) {
-      clearMarks();
-      if (q.trim()) {
-        box.classList.add('no-match');
-        out.innerHTML = '<p class="none">Nothing on this page answers that. It only quotes what is written here.</p>';
-      }
-      active(); return;
+    if (!q.trim()) { clearMarks(); active(); return; }
+    var r = answer(q), cited = [];
+    function cite(c, parent) { // c: {d, hit}; one number per passage across the whole answer
+      var k = 0; while (k < cited.length && cited[k].d !== c.d) k++;
+      if (k === cited.length) cited.push(c);
+      var b = el('button', 'cite', String(k + 1)); b.type = 'button';
+      b.setAttribute('aria-label', 'Source ' + (k + 1) + ': ' + c.d.head);
+      b.onclick = function () { goTo(c.d); };
+      parent.appendChild(b); parent.appendChild(document.createTextNode(' '));
     }
-    var p = document.createElement('p'); p.className = 'answer';
-    results.forEach(function (r, i) {
-      var s = document.createElement('span');
-      s.innerHTML = '“' + esc(r.p.text).replace(WORD, function (w) { return r.hit[stem(w.toLowerCase())] ? '<b>' + w + '</b>' : w; }) + '” ';
-      var c = document.createElement('button'); c.type = 'button'; c.className = 'cite'; c.textContent = i + 1;
-      c.setAttribute('aria-label', 'Source ' + (i + 1) + ': ' + r.p.head);
-      c.onclick = function () { goTo(r); };
-      p.appendChild(s); p.appendChild(c); p.appendChild(document.createTextNode(' '));
-    });
-    var src = document.createElement('p'); src.className = 'srcs';
-    src.textContent = 'Sources: ' + results.map(function (r, i) { return (i + 1) + ' ' + r.p.head; }).join(' · ');
-    out.appendChild(p); out.appendChild(src);
-    box.classList.add('has-answer'); mark(results); active();
+
+    if (r.kind === 'curated') {
+      var c = r.cur[0].d, m = el('p', 'matched', 'Answering: ');
+      m.appendChild(el('b', '', c.c.q)); out.appendChild(m);
+      var p = el('p', 'answer curated', c.c.a + ' ');
+      c.cites.forEach(function (d) { cite({ d: d, hit: {} }, p); });
+      out.appendChild(p);
+      out.appendChild(el('p', 'by', "Rama's answer, written ahead of time"));
+      var alt = r.cur.slice(1, 3).filter(function (x) { return x.score >= T_CURATED * .5; });
+      if (alt.length) {
+        var nq = el('div', 'chips alt'); nq.appendChild(el('span', 'lbl', 'Not quite? '));
+        alt.forEach(function (x) { chip(x.d.c.q, nq); }); out.appendChild(nq);
+      }
+    } else {
+      if (r.kind === 'fallback') {
+        box.classList.add('no-match');
+        out.appendChild(el('p', 'none', r.quotes.length ? "This page doesn't answer that directly. The closest it gets:" : "This page doesn't cover that. Try one of these, or email me:"));
+      }
+      if (r.quotes.length) {
+        var qp = el('p', 'answer' + (r.kind === 'fallback' ? ' weak' : ''));
+        r.quotes.forEach(function (x) { var s = el('span'); s.innerHTML = quote(x); qp.appendChild(s); cite(x, qp); });
+        out.appendChild(qp);
+      }
+      if (r.kind === 'fallback') { // closest curated questions first, then the suggestions
+        var tries = el('div', 'chips alt'), picks = r.cur.slice(0, 3).map(function (x) { return x.d.c.q; });
+        SUGGEST.forEach(function (s) { if (picks.length < 4 && picks.indexOf(s) < 0) picks.push(s); });
+        picks.forEach(function (s) { chip(s, tries); }); out.appendChild(tries);
+      }
+    }
+    if (cited.length) out.appendChild(el('p', 'srcs', 'Sources: ' + cited.map(function (c, k) { return (k + 1) + ' ' + c.d.head; }).join(' · ')));
+    if (r.kind !== 'fallback') box.classList.add('has-answer');
+    mark(cited); active();
+  }
+  var asked = 0;
+  function ask(q) {
+    input.value = q;
+    var n = ++asked;
+    load().then(function () { if (n === asked) render(q); }); // a newer question wins
   }
 
-  SUGGEST.forEach(function (s) {
-    var b = document.createElement('button'); b.type = 'button'; b.textContent = s;
-    b.onclick = function () { run(s); input.focus(); };
-    chipBox.appendChild(b);
+  SUGGEST.forEach(function (s) { chip(s, chipBox); });
+  var timer;
+  input.addEventListener('input', function () { // wait for a pause in typing, so half a question never shows a miss
+    clearTimeout(timer);
+    timer = setTimeout(function () { ask(input.value); }, 250);
   });
-  input.addEventListener('input', function () { run(input.value); });
-  input.addEventListener('keydown', function (e) { if (e.key === 'Escape') run(''); });
-  box.addEventListener('focusin', active);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { clearTimeout(timer); ask(''); }
+    if (e.key === 'Enter') { clearTimeout(timer); ask(input.value); }
+  });
+  box.addEventListener('focusin', function () { load(); active(); });
   box.addEventListener('focusout', function () { setTimeout(active); });
   document.addEventListener('keydown', function (e) { // "/" jumps to the box, unless the visitor is typing or a dialog is open
     var a = document.activeElement;
     if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || /INPUT|TEXTAREA|SELECT/.test(a.tagName) || a.isContentEditable || document.querySelector('dialog[open]')) return;
     e.preventDefault(); input.focus();
   });
-  window.askThisPage = search; // for tuning the ranking from the console
+  window.askThisPage = function (q) { return load().then(function () { return answer(q); }); }; // for tuning from the console
 })();
