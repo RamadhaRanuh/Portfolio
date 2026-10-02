@@ -78,7 +78,10 @@ h2::before{content:"// ";color:var(--accent)}
 .venue{font:12px/1.5 var(--mono);color:var(--mute);margin-top:6px}
 .card p{color:var(--mute);font-size:15px;margin-top:10px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin:16px 0}
+.card .tested{font-size:14px}
+.card .tested b{font-weight:500;color:var(--fg)}
 .stats div{background:var(--bg);padding:12px 14px;transition:background-color .3s}
+.stats div:last-child:nth-child(odd){grid-column:1/-1}
 .stats dt{font:400 22px/1.2 var(--mono);color:var(--accent)}
 .stats dd{margin:2px 0 0;color:var(--mute);font-size:12px;line-height:1.4}
 .meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px}

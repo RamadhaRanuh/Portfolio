@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Rama Ranuh – AI Engineer</title>
-<meta name="description" content="AI Engineer building and evaluating local LLM applications. Projects: Local Notebook, a medical RAG chatbot, a Transformer from scratch, and a skin-disease paper.">
+<meta name="description" content="AI Engineer building and evaluating local LLM applications. Projects: Deepnote (a local NotebookLM), SCOPA (an agentic Indonesian benchmark), a medical RAG chatbot and a Transformer from scratch.">
 <link rel="canonical" href="https://ramadharanuh.github.io/Portfolio/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Rama Ranuh – AI Engineer">
@@ -86,24 +86,67 @@ document.documentElement.dataset.theme=t})();
 
 			<article class="card">
 				<div>
-					<h3>Local Notebook</h3>
-					<p>Ask questions of your own documents and get answers with citations you can click, with nothing leaving the machine. Hybrid dense and BM25 retrieval, a reranker, and citations checked sentence by sentence, all on a laptop GPU.</p>
+					<h3>Deepnote</h3>
+					<p>NotebookLM, rebuilt to run on a laptop. Add PDFs, web pages or YouTube videos, then ask questions and get answers with citations that open the exact passage. Study guides, FAQs and mind maps come from the same sources, and nothing leaves the machine. Hybrid dense and BM25 retrieval, a reranker, and citations checked sentence by sentence, all on an 8 GB GPU.</p>
+					<p class="tested"><b>How I tested it:</b> 47 hand-checked questions with gold passages, scored by an LLM judge I spot-checked by hand, after comparing 8 pipeline setups before building.</p>
 					<dl class="stats">
-						<div><dt>0.95</dt><dd>answer correctness, 37 hand-checked questions</dd></div>
+						<div><dt>0.95</dt><dd>answer correctness, LLM-judged, 37 public questions</dd></div>
 						<div><dt>0.94</dt><dd>citation recall</dd></div>
 						<div><dt>4.95 s</dt><dd>median time to answer</dd></div>
-						<div><dt>8 GB</dt><dd>laptop GPU, fully local</dd></div>
+						<div><dt>0.60 → 0.90</dt><dd>correctness on my own documents with Deep mode</dd></div>
 					</dl>
 					<div class="meta">
-						<span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">Ollama</span><span class="tag">LanceDB</span><span class="tag">React</span>
+						<span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">Ollama</span><span class="tag">LanceDB</span><span class="tag">React</span><span class="tag">Docker</span>
 						<span class="links"><a href="https://github.com/RamadhaRanuh/Deepnote">code ↗</a></span>
 					</div>
 				</div>
 				<div class="media">
-					<button class="zoom" type="button" aria-label="Enlarge the Local Notebook screenshot">
-						<img src="assets/img/local-notebook.webp" width="1200" height="717" alt="Local Notebook: a chat answer with numbered citations, and the cited passage highlighted in the source PDF beside it.">
+					<button class="zoom" type="button" aria-label="Enlarge the Deepnote screenshot">
+						<img src="assets/img/local-notebook.webp" width="1200" height="717" alt="Deepnote: a chat answer with numbered citations, and the cited passage highlighted in the source PDF beside it.">
 						<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 9 7M6.5 13.5h-4v-4M2.5 13.5 7 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
 					</button>
+				</div>
+			</article>
+
+			<article class="card" id="scopa">
+				<div>
+					<h3>SCOPA</h3>
+					<p class="venue">ISRITI 2025 · IEEE · first author</p>
+					<p>A multi-agent pipeline on GPT-5 that writes a causal-reasoning benchmark for Indonesian and Jakarta dialect, starting from about 4,000 posts on X. Agents turn posts into seed data, write items, validate them (rejects go back for revision), annotate them and rewrite them in dialect. Every model tested, and the human annotators, scored lower on it than on the human-written COPAL-ID.</p>
+					<dl class="stats">
+						<div><dt>$2.05</dt><dd>to generate and annotate 200 items</dd></div>
+						<div><dt>98 → 95.5%</dt><dd>GPT-5, COPAL-ID vs SCOPA</dd></div>
+						<div><dt>74 → 63.5%</dt><dd>Llama-3.1-8B, COPAL-ID vs SCOPA</dd></div>
+						<div><dt>7</dt><dd>models benchmarked, plus human annotators</dd></div>
+					</dl>
+					<div class="meta">
+						<span class="tag">Python</span><span class="tag">GPT-5</span><span class="tag">Multi-agent</span><span class="tag">Sentence-BERT</span>
+						<span class="links"><a href="https://ieeexplore.ieee.org/document/11393252/">paper ↗</a><a href="https://doi.org/10.57967/hf/7123">dataset ↗</a><a href="https://github.com/RamadhaRanuh/Agent-COPA-Generator">code ↗</a></span>
+					</div>
+				</div>
+				<div class="media">
+					<svg data-diagram="scopa" viewBox="0 0 440 262" role="img" aria-label="SCOPA pipeline: posts from X go through data, transformator, generator, validator, annotator and colloquial agents, with rejected items sent back from the validator to the generator.">
+						<defs><marker id="ar3" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="m" d="M0 0l8 4-8 4z"/></marker></defs>
+						<g font-size="11" text-anchor="middle">
+							<text class="m" x="20" y="34" text-anchor="start">orchestrator agent · GPT-5 · 10 cycles</text>
+							<rect class="box" x="20" y="56" width="116" height="34" rx="6"/><text x="78" y="77">posts on X</text>
+							<rect class="box" x="162" y="56" width="116" height="34" rx="6"/><text x="220" y="77">data agent</text>
+							<rect class="box" x="304" y="56" width="116" height="34" rx="6"/><text x="362" y="77">transformator</text>
+							<rect class="abox" x="20" y="130" width="116" height="34" rx="6"/><text x="78" y="151">generator</text>
+							<rect class="abox" x="162" y="130" width="116" height="34" rx="6"/><text x="220" y="151">validator</text>
+							<rect class="box" x="304" y="130" width="116" height="34" rx="6"/><text x="362" y="151">annotator</text>
+							<rect class="box" x="304" y="204" width="116" height="34" rx="6"/><text x="362" y="225">colloquial</text>
+							<text class="m" x="200" y="226">200 items, $2.05</text>
+							<text class="m" x="139" y="196">revise</text>
+						</g>
+						<g class="ln" marker-end="url(#ar3)">
+							<path d="M136 73h24"/><path d="M278 73h24"/>
+							<path d="M362 90v14H78v24"/>
+							<path d="M136 141h24"/><path d="M278 147h24"/>
+							<path d="M220 164v12H78v-10" stroke-dasharray="3 3"/>
+							<path d="M362 164v38"/><path d="M304 221h-44"/>
+						</g>
+					</svg>
 				</div>
 			</article>
 
@@ -115,6 +158,7 @@ document.documentElement.dataset.theme=t})();
 					<dl class="stats">
 						<div><dt>97.56%</dt><dd>best test accuracy (YOLO)</dd></div>
 						<div><dt>5</dt><dd>models compared</dd></div>
+						<div><dt>6</dt><dd>citations, Google Scholar, Oct 2026</dd></div>
 					</dl>
 					<div class="meta">
 						<span class="tag">TensorFlow</span><span class="tag">Keras</span><span class="tag">YOLOv8</span>
@@ -122,7 +166,7 @@ document.documentElement.dataset.theme=t})();
 					</div>
 				</div>
 				<div class="media">
-					<svg viewBox="0 0 440 262" role="img" aria-label="Test accuracy by model: YOLO 97.56%, InceptionResNetV2 89.74%, DenseNet201 87.18%, GoogLeNet 87.18%, MobileNet 79.49%.">
+					<svg data-diagram="accuracy" viewBox="0 0 440 262" role="img" aria-label="Test accuracy by model: YOLO 97.56%, InceptionResNetV2 89.74%, DenseNet201 87.18%, GoogLeNet 87.18%, MobileNet 79.49%.">
 						<text class="m" x="20" y="30" font-size="11">test accuracy, 50 epochs</text>
 						<g font-size="11">
 							<text x="20" y="66">YOLO</text><rect class="bar-bg" x="156" y="54" width="200" height="16" rx="2"/><rect class="a" x="156" y="54" width="195.1" height="16" rx="2"/><text class="a" x="366" y="66">97.56%</text>
@@ -149,7 +193,7 @@ document.documentElement.dataset.theme=t})();
 					</div>
 				</div>
 				<div class="media">
-					<svg viewBox="0 0 440 262" role="img" aria-label="Pipeline: encyclopedia PDFs are chunked and embedded into ChromaDB; a question retrieves the closest passages, and a local model streams an answer from them.">
+					<svg data-diagram="rag" viewBox="0 0 440 262" role="img" aria-label="Pipeline: encyclopedia PDFs are chunked and embedded into ChromaDB; a question retrieves the closest passages, and a local model streams an answer from them.">
 						<defs><marker id="ar1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="m" d="M0 0l8 4-8 4z"/></marker></defs>
 						<g font-size="11" text-anchor="middle">
 							<text class="m" x="20" y="30" text-anchor="start">index once</text>
@@ -186,7 +230,7 @@ document.documentElement.dataset.theme=t})();
 					</div>
 				</div>
 				<div class="media">
-					<svg viewBox="0 0 440 262" role="img" aria-label="Two block stacks. Transformer: embeddings, multi-head attention, feed forward, linear and softmax. Llama 2-style decoder: RMSNorm, attention with RoPE and grouped queries, SwiGLU feed forward, KV cache.">
+					<svg data-diagram="stacks" viewBox="0 0 440 262" role="img" aria-label="Two block stacks. Transformer: embeddings, multi-head attention, feed forward, linear and softmax. Llama 2-style decoder: RMSNorm, attention with RoPE and grouped queries, SwiGLU feed forward, KV cache.">
 						<defs><marker id="ar2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path class="m" d="M0 0l8 4-8 4z"/></marker></defs>
 						<g font-size="11" text-anchor="middle">
 							<text class="m" x="20" y="30" text-anchor="start">transformer</text>
@@ -214,10 +258,9 @@ document.documentElement.dataset.theme=t})();
 	<section id="experience" aria-labelledby="h-experience">
 		<h2 id="h-experience">experience</h2>
 		<ol class="time">
-			<!-- TODO owner: exact full-time start date and a one-line highlight for this role -->
-			<li><span class="when">2026 – present</span><div><b>AI Engineer</b>, GDP Labs</div></li>
+			<li><span class="when">2026 – present</span><div><b>AI Engineer</b>, GDP Labs<p>Building agentic AI products for GDP Labs' users.</p></div></li>
 			<li><span class="when">Feb 2025 – Feb 2026</span><div><b>AI Engineer Intern</b>, GDP Labs<p>Moved LLM serving from vLLM to SGLang: 1.8× throughput and up to 70% lower latency under concurrent load.</p></div></li>
-			<li><span class="when">Dec 2025</span><div><b>Paper at ISRITI</b> (IEEE)<p>A multi-agent orchestration framework that runs synthetic data generation end to end, from retrieval to validation and annotation.</p></div></li>
+			<li><span class="when">Dec 2025</span><div><b>Paper at ISRITI</b> (IEEE) · <a href="#scopa">SCOPA ↑</a><p>A multi-agent orchestration framework that runs synthetic data generation end to end, from retrieval to validation and annotation.</p></div></li>
 			<li><span class="when">Aug 2024</span><div><b>Paper at ICCSCI</b>, Procedia Computer Science<p>Comparing deep learning models for classifying hyperpigmented skin disease.</p></div></li>
 			<li><span class="when">Sep 2022 – Mar 2026</span><div><b>Bachelor of Computer Science</b>, BINUS University<p>GPA 3.94 / 4.00.</p></div></li>
 		</ol>
@@ -229,12 +272,12 @@ document.documentElement.dataset.theme=t})();
 		<h2 id="h-more">more work</h2>
 		<ul class="more">
 			<!-- TODO owner: thesis line (title, one clause, "code private") if it is separate from the ISRITI paper -->
-			<li><span>LLM serving with vLLM and SGLang</span><span class="d">benchmarks and monitoring for local inference servers</span><span class="x p">code private</span></li>
+			<li><span>LLM serving with vLLM and SGLang</span><span class="d">benchmarks for local inference servers</span><span class="x p">code private</span></li>
 			<li><a href="https://github.com/RamadhaRanuh/Speech-Emotion-Recognition">Speech emotion recognition</a><span class="d">classifying emotion from speech audio</span><span class="x" aria-hidden="true">↗</span></li>
 			<li><a href="https://github.com/RamadhaRanuh/Plant-Disease-Detection-Using-ML-DL">Plant disease detection</a><span class="d">SVM and Random Forest against pretrained ResNet and MobileNet</span><span class="x" aria-hidden="true">↗</span></li>
 			<li><a href="https://github.com/RamadhaRanuh/Patient-s-Condition-Classification-Using-Drug-Reviews">Condition classification from drug reviews</a><span class="d">TF-IDF and Word2Vec features with XGBoost</span><span class="x" aria-hidden="true">↗</span></li>
 			<li><a href="https://github.com/RamadhaRanuh/Sentiment-Analysis-Through-YouTube-Scraping">YouTube comment sentiment</a><span class="d">comments scraped through the YouTube API</span><span class="x" aria-hidden="true">↗</span></li>
-			<li><a href="https://github.com/RamadhaRanuh/Rice-Price-Prediction-Model">Rice price forecasting</a><span class="d">ARIMA and SARIMAX</span><span class="x" aria-hidden="true">↗</span></li>
+			<li><a href="https://github.com/RamadhaRanuh/Rice-Price-Prediction-Model">Rice price forecasting</a><span class="d">seasonal ARIMA</span><span class="x" aria-hidden="true">↗</span></li>
 			<li><a href="https://github.com/RamadhaRanuh/TutorDek-Software-Engineer">TutorDek</a><span class="d">web app for finding and hiring tutors</span><span class="x" aria-hidden="true">↗</span></li>
 		</ul>
 	</section>
@@ -254,7 +297,7 @@ document.documentElement.dataset.theme=t})();
 
 <footer class="wrap">© 2026 Rama Ranuh · Jakarta, Indonesia</footer>
 
-<dialog id="lightbox" aria-label="Local Notebook screenshot">
+<dialog id="lightbox" aria-label="Deepnote screenshot">
 	<button class="close" type="button" aria-label="Close">×</button>
 	<img alt="">
 </dialog>

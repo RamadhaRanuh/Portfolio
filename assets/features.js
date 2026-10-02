@@ -1,4 +1,4 @@
-// Screenshot lightbox: the Local Notebook screenshot opens full size in a native dialog.
+// Screenshot lightbox: the Deepnote screenshot opens full size in a native dialog.
 (function () {
   var box = document.getElementById('lightbox'), zoom = document.querySelector('.zoom');
   if (!box || !zoom || !box.showModal) return;
@@ -16,7 +16,7 @@
 // presses play, then rests. Nothing moves until they act.
 (function () {
   var NS = 'http://www.w3.org/2000/svg';
-  var svgs = [].slice.call(document.querySelectorAll('.card .media > svg')); // chart, pipeline, stacks
+  var svgs = [].slice.call(document.querySelectorAll('.card .media > svg[data-diagram]:not([data-diagram=scopa])')); // chart, pipeline, stacks
   if (svgs.length !== 3) return;
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
