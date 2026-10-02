@@ -1,0 +1,86 @@
+// Motion: the page's optional animations, all in this one file so they can be removed wholesale.
+// Every effect is skipped under reduced motion, and none of them holds content back: anything on
+// screen at load is never hidden. Numbers match the feedback-pass spec.
+(function () {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches || !window.IntersectionObserver) return;
+  var $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
+  function whenSeen(els, fn, margin) { // run fn(el) once, the first time el comes into view
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { io.unobserve(e.target); fn(e.target); } });
+    }, { rootMargin: margin || '0px 0px -10% 0px' });
+    els.forEach(function (el) { io.observe(el); });
+  }
+
+  // 1. Rise in on scroll: content below the fold fades up as it enters, staggered among siblings.
+  // Uses the translate property, so it never fights the card tilt's transform.
+  $$('main section h2, .card, .time li, .also, .more li, .contact > *').forEach(function (el) {
+    if (el.getBoundingClientRect().top < innerHeight) return;
+    el.classList.add('fx-rise');
+    el.style.setProperty('--d', Math.min([].indexOf.call(el.parentNode.children, el), 6) * 60 + 'ms');
+  });
+  whenSeen($$('.fx-rise'), function (el) { el.classList.add('in'); });
+  // A passage Ask scrolls to shows at once, without its rise.
+  document.addEventListener('ask:reveal', function (e) {
+    var el = e.detail.closest('.fx-rise');
+    if (el && !el.classList.contains('in')) el.classList.add('fx-now', 'in');
+  });
+
+  // 2. Stats count up from 0 the first time they're seen. Arrow stats and the shelf's cards don't.
+  whenSeen($$('.card .stats dt'), function (dt) {
+    var raw = dt.textContent, m = raw.match(/^([^0-9]*)([0-9][0-9,]*\.?[0-9]*)(.*)$/);
+    if (!m || /→/.test(raw)) return;
+    var end = parseFloat(m[2].replace(/,/g, '')), dec = (m[2].split('.')[1] || '').length, comma = /,/.test(m[2]);
+    var t0 = performance.now();
+    dt.setAttribute('aria-label', raw);
+    (function step(t) {
+      var k = Math.min(1, (t - t0) / 900), v = end * (1 - Math.pow(1 - k, 3)), s = v.toFixed(dec);
+      if (comma) s = Number(s).toLocaleString('en-US', { minimumFractionDigits: dec });
+      dt.textContent = m[1] + s + m[3];
+      if (k < 1) requestAnimationFrame(step); else { dt.textContent = raw; dt.removeAttribute('aria-label'); }
+    })(t0);
+  });
+
+  // 3. Diagrams draw in: boxes and bars fade in, arrows draw as strokes. features.js holds any
+  // playback until the 'drawn' event, then the diagram is handed back to its own styles.
+  $$('.media svg[data-diagram]').forEach(function (svg) {
+    var paths = $$('.ln path', svg), rects = $$('rect', svg), last = 0;
+    svg.classList.add('fx-draw');
+    paths.forEach(function (p, i) {
+      var L = p.getTotalLength(), d = 300 + i * 90;
+      p.style.strokeDasharray = L; p.style.strokeDashoffset = L; p.style.setProperty('--d', d + 'ms');
+      last = Math.max(last, d + 700);
+    });
+    rects.forEach(function (r, i) { r.style.setProperty('--d', i * 50 + 'ms'); last = Math.max(last, i * 50 + 400); });
+    svg.drawMs = last;
+  });
+  whenSeen($$('.fx-draw'), function (svg) {
+    svg.classList.add('in');
+    setTimeout(function () {
+      $$('.ln path, rect', svg).forEach(function (el) { el.style.strokeDasharray = el.style.strokeDashoffset = ''; el.style.removeProperty('--d'); });
+      svg.classList.remove('fx-draw', 'in');
+      svg.dispatchEvent(new Event('drawn'));
+    }, svg.drawMs + 50);
+  });
+
+  // 8. Section labels type themselves out, unless the visitor jumped straight to that section.
+  var heads = $$('main section h2');
+  function jumped(hash) {
+    var s = hash && hash.length > 1 && document.getElementById(hash.slice(1));
+    var h = s && s.querySelector('h2');
+    if (h) h.dataset.jumped = '1';
+  }
+  jumped(location.hash);
+  addEventListener('hashchange', function () { jumped(location.hash); });
+  $$('a[href^="#"]').forEach(function (a) { a.addEventListener('click', function () { jumped(a.getAttribute('href')); }); });
+  whenSeen(heads, function (h) {
+    if (h.dataset.jumped) return;
+    var full = h.textContent, i = 0;
+    h.setAttribute('aria-label', full); h.classList.add('fx-typing'); h.textContent = '';
+    (function next() {
+      if (h.dataset.jumped) i = full.length - 1; // a nav jump mid-typing finishes it at once
+      h.textContent = full.slice(0, ++i);
+      if (i < full.length) setTimeout(next, 55);
+      else setTimeout(function () { h.classList.remove('fx-typing'); h.removeAttribute('aria-label'); }, 900);
+    })();
+  }, '0px 0px -25% 0px');
+})();

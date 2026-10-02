@@ -97,9 +97,15 @@
       d.steps.forEach(function (s) { if (s.bar) s.bar.setAttribute('width', s.w); });
       d.svg.classList.add('played'); cap.textContent = d.rest; label(true); btn.disabled = false;
     }
+    var waiting = false;
     function play() {
-      if (timer) return;
+      if (timer || waiting) return;
       if (reduce) { finish(); return; }
+      if (d.svg.classList.contains('fx-draw')) { // motion.js is still drawing it in
+        waiting = true;
+        d.svg.addEventListener('drawn', function () { waiting = false; play(); }, { once: true });
+        return;
+      }
       d.svg.classList.remove('played'); btn.disabled = true;
       d.steps.forEach(function (s) { if (s.bar) s.bar.setAttribute('width', 0); });
       var i = 0;
