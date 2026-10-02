@@ -68,7 +68,11 @@
   ];
   var word = function (i) { return toks[i].textContent.replace(/[.,]/g, ''); };
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var pinned = -1, hovering = false, paused = false, timer = null, next = 5;
+  // Who sets the query, highest first: a pinned word, then Ask in use (which rests everything
+  // below it), then the cursor (a hovered word, or the nearest one from motion.js), then the
+  // idle walk, which waits 2 s after the mouse leaves.
+  var pinned = -1, hovering = false, follow = -1, paused = false, next = 5, quietUntil = 0;
+  function rest() { show(pinned >= 0 ? pinned : !paused && follow >= 0 ? follow : -1); }
 
   function show(q) {
     toks.forEach(function (t, j) {
@@ -83,41 +87,46 @@
     hint.textContent = 'query "' + word(q) + '" attends to: ' +
       top.map(function (x) { return word(x[0]) + ' ' + x[1].toFixed(2); }).join(', ');
   }
-  function stopWalk() { clearInterval(timer); timer = null; }
 
   toks.forEach(function (t, j) {
     t.addEventListener('pointerenter', function (e) {
-      if (e.pointerType !== 'mouse') return;
+      if (e.pointerType !== 'mouse' || pinned >= 0) return;
       hovering = true; show(j);
     });
     t.addEventListener('pointerleave', function (e) {
       if (e.pointerType !== 'mouse') return;
-      hovering = false; show(pinned);
+      hovering = false; quietUntil = Date.now() + 2000; rest();
     });
     // Tap (or click) pins a word as the query; tapping it again clears it.
     t.addEventListener('click', function (e) {
       e.stopPropagation();
-      stopWalk();
       pinned = pinned === j ? -1 : j;
-      show(pinned);
+      rest();
     });
   });
   document.addEventListener('click', function () {
     if (pinned < 0) return;
-    pinned = -1; show(-1);
+    pinned = -1; rest();
   });
 
-  // The idle walk rests while Ask this page is in use (features.js sends this event).
+  // The idle walk and the cursor rest while Ask this page is in use (features.js sends this event).
   document.addEventListener('ask:active', function (e) {
     if (paused === e.detail) return;
     paused = e.detail;
-    if (paused && !hovering) show(pinned);
+    if (!hovering) rest();
+  });
+  // The nearest headline word to a mouse anywhere over the hero (motion.js sends this; -1 when it leaves).
+  document.addEventListener('heat:follow', function (e) {
+    if (e.detail === follow) return;
+    if (e.detail < 0) quietUntil = Date.now() + 2000;
+    follow = e.detail;
+    if (!hovering) rest();
   });
 
   if (!reduce) {
     show(4);
-    timer = setInterval(function () {
-      if (hovering || paused) return;
+    setInterval(function () {
+      if (pinned >= 0 || hovering || follow >= 0 || paused || Date.now() < quietUntil) return;
       show(next); next = (next + 1) % toks.length;
     }, 1400);
   }

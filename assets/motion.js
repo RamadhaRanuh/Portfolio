@@ -62,6 +62,36 @@
     }, svg.drawMs + 50);
   });
 
+  // 4. The hero lede streams in word by word behind a block cursor, like a model writing it.
+  // Screen readers get the whole sentence at once; every word is forced visible at the end.
+  var lede = document.querySelector('.hero .lede');
+  if (lede) {
+    var full = lede.textContent, parts = full.split(/(\s+)/), n = 0;
+    lede.innerHTML = '<span class="sr-only"></span><span aria-hidden="true">' + parts.map(function (w) {
+      return /^\s*$/.test(w) ? w : '<span class="fx-w" style="animation-delay:' + (150 + n++ * 45) + 'ms">' + w.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</span>';
+    }).join('') + '<span class="fx-caret"></span></span>';
+    lede.firstChild.textContent = full;
+    setTimeout(function () { lede.classList.add('done'); }, 150 + n * 45 + 1200);
+  }
+
+  // 6. With a mouse, the headline word nearest the pointer becomes the heatmap's query.
+  // hero.js decides whether it shows (a pinned word or Ask in use wins).
+  var hero = document.querySelector('.hero'), toks = $$('.hero .tok'), near = -1;
+  function follow(i) { if (i !== near) { near = i; document.dispatchEvent(new CustomEvent('heat:follow', { detail: i })); } }
+  if (hero && toks.length) {
+    hero.addEventListener('pointermove', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      if (e.target.closest('.ask, .cta, a, button, input')) { follow(-1); return; }
+      var best = -1, bd = 260 * 260;
+      toks.forEach(function (t, i) {
+        var r = t.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+        if (dx * dx + dy * dy * 4 < bd) { bd = dx * dx + dy * dy * 4; best = i; }
+      });
+      follow(best);
+    });
+    hero.addEventListener('pointerleave', function () { follow(-1); });
+  }
+
   // 8. Section labels type themselves out, unless the visitor jumped straight to that section.
   var heads = $$('main section h2');
   function jumped(hash) {

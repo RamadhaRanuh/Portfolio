@@ -211,6 +211,13 @@ footer.wrap{margin-top:clamp(72px,12vh,120px);padding-top:22px;padding-bottom:40
 .media svg.fx-draw rect{opacity:0;transition:opacity .4s ease var(--d,0ms)}
 .fx-draw.in .ln path{stroke-dashoffset:0!important}
 .media svg.fx-draw.in rect{opacity:1}
+/* 4. lede streams in */
+.fx-w{opacity:0;animation:fx-w .25s ease forwards}
+@keyframes fx-w{from{opacity:0;filter:blur(3px)}to{opacity:1;filter:none}}
+.fx-caret{display:inline-block;width:.5em;height:1em;margin:0 -.5em 0 0;vertical-align:-.12em;background:var(--accent);animation:fx-blink .9s steps(1) infinite}
+.lede.done .fx-caret{animation:fx-out .4s forwards}
+.lede.done .fx-w{opacity:1;animation:none}
+@keyframes fx-out{to{opacity:0}}
 /* 8. section labels type out */
 .fx-typing::after{content:"▍";color:var(--accent);margin-left:1px;animation:fx-blink .9s steps(1) infinite}
 @keyframes fx-blink{50%{opacity:0}}
